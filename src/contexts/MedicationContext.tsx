@@ -11,6 +11,7 @@ type MedicationContextType = {
   deleteMedication: (id: string) => void;
   markMedicationTaken: (id: string) => void;
   markMedicationSkipped: (id: string) => void;
+  markMedicationPending: (id: string) => void;
   getProcedureDetails: (id: string) => ProcedureDetail | undefined;
 };
 
@@ -237,6 +238,19 @@ export const MedicationProvider = ({ children }: { children: ReactNode }) => {
     });
   };
 
+  const markMedicationPending = (id: string) => {
+    setTodayMedications(
+      todayMedications.map((med) =>
+        med.id === id ? { ...med, status: 'pending' as const } : med
+      )
+    );
+    
+    toast({
+      title: "Action undone",
+      description: "Medication status has been reset",
+    });
+  };
+
   const getProcedureDetails = (id: string) => {
     return MOCK_PROCEDURE_DETAILS[id];
   };
@@ -252,6 +266,7 @@ export const MedicationProvider = ({ children }: { children: ReactNode }) => {
         deleteMedication,
         markMedicationTaken,
         markMedicationSkipped,
+        markMedicationPending,
         getProcedureDetails,
       }}
     >

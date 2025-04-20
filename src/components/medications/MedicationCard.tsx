@@ -4,7 +4,7 @@ import { useMedication } from "@/contexts/MedicationContext";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { CheckCircle, XCircle, Clock } from "lucide-react";
+import { CheckCircle, XCircle, Clock, UndoDot } from "lucide-react";
 import { formatTime } from "@/lib/utils";
 
 interface MedicationCardProps {
@@ -13,7 +13,7 @@ interface MedicationCardProps {
 }
 
 export function MedicationCard({ medication, isImmediate }: MedicationCardProps) {
-  const { markMedicationTaken, markMedicationSkipped } = useMedication();
+  const { markMedicationTaken, markMedicationSkipped, markMedicationPending } = useMedication();
 
   const handleMarkTaken = () => {
     markMedicationTaken(medication.id);
@@ -21,6 +21,10 @@ export function MedicationCard({ medication, isImmediate }: MedicationCardProps)
 
   const handleMarkSkipped = () => {
     markMedicationSkipped(medication.id);
+  };
+
+  const handleUndo = () => {
+    markMedicationPending(medication.id);
   };
 
   return (
@@ -88,6 +92,19 @@ export function MedicationCard({ medication, isImmediate }: MedicationCardProps)
               Skip
             </Button>
           </div>
+        </CardFooter>
+      )}
+      {(medication.status === 'taken' || medication.status === 'skipped') && (
+        <CardFooter className="pt-0">
+          <Button
+            variant="outline"
+            size="sm"
+            className="w-full border-primary hover:border-primary hover:bg-primary/20"
+            onClick={handleUndo}
+          >
+            <UndoDot className="mr-1 h-4 w-4" />
+            Undo {medication.status === 'taken' ? 'Taken' : 'Skipped'}
+          </Button>
         </CardFooter>
       )}
     </Card>
