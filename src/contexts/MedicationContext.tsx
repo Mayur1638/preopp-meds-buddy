@@ -1,6 +1,6 @@
-
 import { createContext, useContext, useState, useEffect, ReactNode } from "react";
 import { Medication, TodayMedication, Procedure, ProcedureDetail } from "@/types";
+import { useToast } from "@/hooks/use-toast";
 
 type MedicationContextType = {
   medications: Medication[];
@@ -130,6 +130,7 @@ export const MedicationProvider = ({ children }: { children: ReactNode }) => {
   const [medications, setMedications] = useState<Medication[]>(MOCK_MEDICATIONS);
   const [todayMedications, setTodayMedications] = useState<TodayMedication[]>([]);
   const [procedures] = useState<Procedure[]>(MOCK_PROCEDURES);
+  const { toast } = useToast();
 
   useEffect(() => {
     // Generate today's medications based on current date and time
@@ -187,6 +188,19 @@ export const MedicationProvider = ({ children }: { children: ReactNode }) => {
         med.id === id ? { ...med, status: 'taken' as const } : med
       )
     );
+
+    toast({
+      title: "Medication marked as taken",
+      description: "Click undo to reverse this action",
+      action: (
+        <button
+          onClick={() => undoMedicationStatus(id)}
+          className="text-primary hover:text-primary/90 font-medium"
+        >
+          Undo
+        </button>
+      ),
+    });
   };
 
   const markMedicationSkipped = (id: string) => {
@@ -195,6 +209,32 @@ export const MedicationProvider = ({ children }: { children: ReactNode }) => {
         med.id === id ? { ...med, status: 'skipped' as const } : med
       )
     );
+
+    toast({
+      title: "Medication marked as skipped",
+      description: "Click undo to reverse this action",
+      action: (
+        <button
+          onClick={() => undoMedicationStatus(id)}
+          className="text-primary hover:text-primary/90 font-medium"
+        >
+          Undo
+        </button>
+      ),
+    });
+  };
+
+  const undoMedicationStatus = (id: string) => {
+    setTodayMedications(
+      todayMedications.map((med) =>
+        med.id === id ? { ...med, status: 'pending' as const } : med
+      )
+    );
+    
+    toast({
+      title: "Action undone",
+      description: "Medication status has been reset",
+    });
   };
 
   const getProcedureDetails = (id: string) => {
