@@ -1,0 +1,46 @@
+
+import { Home, Pill, Calendar, Settings, LogOut } from "lucide-react";
+import { Link, useLocation } from "react-router-dom";
+import { useAuth } from "@/contexts/AuthContext";
+import { cn } from "@/lib/utils";
+
+export function BottomNav() {
+  const location = useLocation();
+  const { signOut } = useAuth();
+
+  const navItems = [
+    { path: "/", label: "Home", icon: <Home className="h-5 w-5" /> },
+    { path: "/medications", label: "Meds", icon: <Pill className="h-5 w-5" /> },
+    { path: "/procedures", label: "Procedures", icon: <Calendar className="h-5 w-5" /> },
+    { path: "/profile", label: "Profile", icon: <Settings className="h-5 w-5" /> },
+  ];
+
+  return (
+    <nav className="fixed bottom-0 left-0 right-0 border-t border-border bg-card">
+      <div className="flex justify-around items-center h-16">
+        {navItems.map((item) => (
+          <Link
+            key={item.path}
+            to={item.path}
+            className={cn(
+              "flex flex-col items-center justify-center px-3 py-2",
+              location.pathname === item.path
+                ? "text-primary"
+                : "text-muted-foreground hover:text-primary"
+            )}
+          >
+            {item.icon}
+            <span className="text-xs mt-1">{item.label}</span>
+          </Link>
+        ))}
+        <button
+          onClick={signOut}
+          className="flex flex-col items-center justify-center px-3 py-2 text-destructive hover:text-destructive/80"
+        >
+          <LogOut className="h-5 w-5" />
+          <span className="text-xs mt-1">Logout</span>
+        </button>
+      </div>
+    </nav>
+  );
+}
