@@ -23,7 +23,7 @@ const Medications = () => {
       </button>
       <Dialog open={showAdd} onOpenChange={setShowAdd}>
         <DialogContent className="max-w-lg">
-          <MedicationForm onSuccess={() => setShowAdd(false)} />
+          <MedicationForm onSuccess={() => setShowAdd(false)} onClose={() => setShowAdd(false)} />
         </DialogContent>
       </Dialog>
     </div>

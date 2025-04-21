@@ -18,10 +18,11 @@ import { X } from "lucide-react";
 
 interface MedicationFormProps {
   medication?: Medication;
-  onClose: () => void;
+  onClose?: () => void;
+  onSuccess?: () => void;
 }
 
-export function MedicationForm({ medication, onClose }: MedicationFormProps) {
+export function MedicationForm({ medication, onClose, onSuccess }: MedicationFormProps) {
   const [name, setName] = useState(medication?.name || "");
   const [quantity, setQuantity] = useState(medication?.quantity || "");
   const [startDate, setStartDate] = useState(medication?.startDate || new Date().toISOString().split('T')[0]);
@@ -76,7 +77,12 @@ export function MedicationForm({ medication, onClose }: MedicationFormProps) {
       });
     }
     
-    onClose();
+    if (onSuccess) onSuccess();
+    if (onClose) onClose();
+  };
+  
+  const handleClose = () => {
+    if (onClose) onClose();
   };
   
   return (
@@ -86,7 +92,7 @@ export function MedicationForm({ medication, onClose }: MedicationFormProps) {
           <CardTitle className="text-xl font-bold">
             {medication ? "Edit Medication" : "Add Medication"}
           </CardTitle>
-          <Button size="icon" variant="ghost" onClick={onClose}>
+          <Button size="icon" variant="ghost" onClick={handleClose}>
             <X className="h-4 w-4" />
           </Button>
         </div>

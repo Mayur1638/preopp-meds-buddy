@@ -16,6 +16,7 @@ type MedicationContextType = {
   markMedicationSkipped: (id: string) => void;
   markMedicationPending: (id: string) => void;
   getProcedureDetails: (id: string) => typeof MOCK_PROCEDURE_DETAILS[keyof typeof MOCK_PROCEDURE_DETAILS] | undefined;
+  addProcedure: (procedure: Procedure) => void;
 };
 
 const MedicationContext = createContext<MedicationContextType | undefined>(undefined);
@@ -23,7 +24,7 @@ const MedicationContext = createContext<MedicationContextType | undefined>(undef
 export const MedicationProvider = ({ children }: { children: ReactNode }) => {
   const [medications, setMedications] = useState<Medication[]>(MOCK_MEDICATIONS);
   const [todayMedications, setTodayMedications] = useState<TodayMedication[]>([]);
-  const [procedures] = useState<Procedure[]>(MOCK_PROCEDURES);
+  const [procedures, setProcedures] = useState<Procedure[]>(MOCK_PROCEDURES);
   const { toast } = useToast();
 
   useEffect(() => {
@@ -80,6 +81,14 @@ export const MedicationProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const getProcedureDetails = (id: string) => MOCK_PROCEDURE_DETAILS[id];
+  
+  const addProcedure = (procedure: Procedure) => {
+    setProcedures([...procedures, procedure]);
+    toast({
+      title: "Success",
+      description: "Procedure added successfully",
+    });
+  };
 
   return (
     <MedicationContext.Provider
@@ -94,6 +103,7 @@ export const MedicationProvider = ({ children }: { children: ReactNode }) => {
         markMedicationSkipped,
         markMedicationPending,
         getProcedureDetails,
+        addProcedure,
       }}
     >
       {children}

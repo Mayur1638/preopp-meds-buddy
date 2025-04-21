@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { FormInput } from "@/components/ui/form-input";
 
 const genderOptions = ["Male", "Female", "Other"];
 const bloodGroups = ["A+", "A-", "B+", "B-", "O+", "O-", "AB+", "AB-"];
@@ -59,13 +59,49 @@ export default function Profile() {
         </CardHeader>
         <CardContent>
           <form className="grid gap-4">
-            <Input label="Name" name="name" value={profile.name} onChange={handleChange} placeholder="Full Name" disabled />
-            <Input label="Email" name="email" value={profile.email} onChange={handleChange} placeholder="Email" disabled />
-
-            <Input label="Date of Birth" name="dob" type="date" value={profile.dob} onChange={handleChange} />
-            <Input label="Height (cm)" name="height" type="number" value={profile.height} onChange={handleChange} />
-            <Input label="Weight (kg)" name="weight" type="number" value={profile.weight} onChange={handleChange} />
-            <Input label="Allergies" name="allergies" value={profile.allergies} onChange={handleChange} />
+            <FormInput 
+              label="Name" 
+              name="name" 
+              value={profile.name} 
+              onChange={handleChange} 
+              placeholder="Full Name" 
+              disabled 
+            />
+            <FormInput 
+              label="Email" 
+              name="email" 
+              value={profile.email} 
+              onChange={handleChange} 
+              placeholder="Email" 
+              disabled 
+            />
+            <FormInput 
+              label="Date of Birth" 
+              name="dob" 
+              type="date" 
+              value={profile.dob} 
+              onChange={handleChange} 
+            />
+            <FormInput 
+              label="Height (cm)" 
+              name="height" 
+              type="number" 
+              value={profile.height} 
+              onChange={handleChange} 
+            />
+            <FormInput 
+              label="Weight (kg)" 
+              name="weight" 
+              type="number" 
+              value={profile.weight} 
+              onChange={handleChange} 
+            />
+            <FormInput 
+              label="Allergies" 
+              name="allergies" 
+              value={profile.allergies} 
+              onChange={handleChange} 
+            />
             <div>
               <label className="block mb-1 text-sm">Gender</label>
               <select name="gender" value={profile.gender} onChange={handleSelectChange} className="w-full border rounded p-2 text-foreground bg-background">
@@ -86,9 +122,27 @@ export default function Profile() {
             </div>
             <fieldset className="border rounded-xl p-3 mt-2">
               <legend className="text-sm font-medium px-1">Emergency Contact</legend>
-              <Input label="Name" name="name" value={profile.emergencyContact.name} onChange={handleEmergencyContactChange} placeholder="Contact Name" />
-              <Input label="Contact" name="contact" value={profile.emergencyContact.contact} onChange={handleEmergencyContactChange} placeholder="Phone/Email" />
-              <Input label="Relationship" name="relationship" value={profile.emergencyContact.relationship} onChange={handleEmergencyContactChange} placeholder="Relation" />
+              <FormInput 
+                label="Name" 
+                name="name" 
+                value={profile.emergencyContact.name} 
+                onChange={handleEmergencyContactChange} 
+                placeholder="Contact Name" 
+              />
+              <FormInput 
+                label="Contact" 
+                name="contact" 
+                value={profile.emergencyContact.contact} 
+                onChange={handleEmergencyContactChange} 
+                placeholder="Phone/Email" 
+              />
+              <FormInput 
+                label="Relationship" 
+                name="relationship" 
+                value={profile.emergencyContact.relationship} 
+                onChange={handleEmergencyContactChange} 
+                placeholder="Relation" 
+              />
             </fieldset>
             <Button type="button" disabled>
               Save Changes  {/* Placeholder, implement save next! */}
