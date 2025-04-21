@@ -1,4 +1,3 @@
-
 import type { Config } from "tailwindcss";
 
 export default {
@@ -19,6 +18,18 @@ export default {
 			}
 		},
 		extend: {
+			fontSize: {
+				xs: ['0.75rem', { lineHeight: '1rem' }],         // 12px
+				sm: ['0.813rem', { lineHeight: '1.15rem' }],     // ~13px
+				base: ['0.9rem', { lineHeight: '1.3rem' }],      // ~14.5px
+				lg: ['1rem', { lineHeight: '1.5rem' }],          // 16px
+				xl: ['1.125rem', { lineHeight: '1.6rem' }],      // 18px
+				'2xl': ['1.25rem', { lineHeight: '1.7rem' }],    // 20px
+				'3xl': ['1.375rem', { lineHeight: '1.8rem' }],   // 22px
+				'4xl': ['1.5rem', { lineHeight: '2rem' }],       // 24px
+				'5xl': ['1.75rem', { lineHeight: '2.1rem' }],    // 28px
+				'6xl': ['2rem', { lineHeight: '2.25rem' }],      // 32px
+			},
 			fontFamily: {
 				'dmsans': ['DM Sans', 'sans-serif'],
 			},

@@ -56,6 +56,7 @@
 
   body {
     @apply bg-background text-foreground font-dmsans;
+    font-size: 13px; /* smaller base size */
   }
 
   html {

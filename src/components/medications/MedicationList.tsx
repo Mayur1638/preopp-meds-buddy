@@ -4,7 +4,7 @@ import { useMedication } from "@/contexts/MedicationContext";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Edit, Trash2, Clock } from "lucide-react";
+import { Edit, Trash2, Clock, Plus } from "lucide-react";
 import { useState } from "react";
 import { MedicationForm } from "./MedicationForm";
 import {
@@ -48,9 +48,16 @@ export function MedicationList() {
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
-        <h2 className="text-2xl font-bold">Your Medications</h2>
-        <Button onClick={() => setIsAddingMedication(true)}>
-          Add Medication
+        {/* Remove large header */}
+        {/* Show compact + button only */}
+        <div />
+        <Button
+          size="icon"
+          aria-label="Add Medication"
+          onClick={() => setIsAddingMedication(true)}
+          className="bg-primary text-primary-foreground w-9 h-9 rounded-full shadow-md hover:bg-primary/80 transition"
+        >
+          <Plus size={18} />
         </Button>
       </div>
 
