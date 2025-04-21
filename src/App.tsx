@@ -12,6 +12,7 @@ import Medications from "./pages/Medications";
 import Procedures from "./pages/Procedures";
 import ProcedureDetails from "./pages/ProcedureDetails";
 import NotFound from "./pages/NotFound";
+import Profile from "./pages/Profile";
 import { useEffect } from "react";
 
 const queryClient = new QueryClient();
@@ -84,6 +85,12 @@ const AppRoutes = () => {
         <Route path="/procedures/:id" element={
           <ProtectedRoute>
             <ProcedureDetails />
+          </ProtectedRoute>
+        } />
+        
+        <Route path="/profile" element={
+          <ProtectedRoute>
+            <Profile />
           </ProtectedRoute>
         } />
         

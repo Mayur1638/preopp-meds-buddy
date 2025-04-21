@@ -51,10 +51,11 @@
 @layer base {
   * {
     @apply border-border;
+    font-family: 'DM Sans', 'sans-serif';
   }
 
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground font-dmsans;
   }
 
   html {

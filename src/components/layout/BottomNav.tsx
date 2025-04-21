@@ -1,12 +1,24 @@
 
 import { Home, Pill, Calendar, Settings, LogOut } from "lucide-react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { cn } from "@/lib/utils";
+import React, { useState } from "react";
+import { LogoutDialog } from "./LogoutDialog";
 
 export function BottomNav() {
   const location = useLocation();
   const { signOut } = useAuth();
+  const [showLogout, setShowLogout] = useState(false);
+
+  const handleLogout = () => setShowLogout(true);
+
+  const handleConfirm = () => {
+    setShowLogout(false);
+    signOut();
+  };
+
+  const handleCancel = () => setShowLogout(false);
 
   const navItems = [
     { path: "/", label: "Home", icon: <Home className="h-5 w-5" /> },
@@ -16,31 +28,34 @@ export function BottomNav() {
   ];
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 border-t border-border bg-card">
-      <div className="flex justify-around items-center h-16">
-        {navItems.map((item) => (
-          <Link
-            key={item.path}
-            to={item.path}
-            className={cn(
-              "flex flex-col items-center justify-center px-3 py-2",
-              location.pathname === item.path
-                ? "text-primary"
-                : "text-muted-foreground hover:text-primary"
-            )}
+    <>
+      <nav className="fixed bottom-0 left-0 right-0 border-t border-border bg-card">
+        <div className="flex justify-around items-center h-16">
+          {navItems.map((item) => (
+            <Link
+              key={item.path}
+              to={item.path}
+              className={cn(
+                "flex flex-col items-center justify-center px-3 py-2",
+                location.pathname === item.path
+                  ? "text-primary"
+                  : "text-muted-foreground hover:text-primary"
+              )}
+            >
+              {item.icon}
+              <span className="text-xs mt-1">{item.label}</span>
+            </Link>
+          ))}
+          <button
+            onClick={handleLogout}
+            className="flex flex-col items-center justify-center px-3 py-2 text-destructive hover:text-destructive/80"
           >
-            {item.icon}
-            <span className="text-xs mt-1">{item.label}</span>
-          </Link>
-        ))}
-        <button
-          onClick={signOut}
-          className="flex flex-col items-center justify-center px-3 py-2 text-destructive hover:text-destructive/80"
-        >
-          <LogOut className="h-5 w-5" />
-          <span className="text-xs mt-1">Logout</span>
-        </button>
-      </div>
-    </nav>
+            <LogOut className="h-5 w-5" />
+            <span className="text-xs mt-1">Logout</span>
+          </button>
+        </div>
+      </nav>
+      <LogoutDialog open={showLogout} onConfirm={handleConfirm} onCancel={handleCancel} />
+    </>
   );
 }
