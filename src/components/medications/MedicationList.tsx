@@ -47,17 +47,18 @@ export function MedicationList() {
 
   return (
     <div className="space-y-6">
-      <div className="flex justify-between items-center">
-        {/* Remove large header */}
-        {/* Show compact + button only */}
-        <div />
+      <div className="flex justify-between items-center mb-1">
+        <div className="flex items-center gap-2">
+          <span className="font-semibold" style={{ fontSize: 16 }}>Your medications</span>
+        </div>
         <Button
-          size="icon"
+          size="sm"
           aria-label="Add Medication"
           onClick={() => setIsAddingMedication(true)}
-          className="bg-primary text-primary-foreground w-9 h-9 rounded-full shadow-md hover:bg-primary/80 transition"
+          variant="outline"
+          className="flex gap-1 items-center px-3 py-1 rounded hover:bg-primary/10 duration-150"
         >
-          <Plus size={18} />
+          <Plus size={18} /> Add
         </Button>
       </div>
 
