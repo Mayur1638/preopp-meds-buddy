@@ -1,33 +1,12 @@
+
 import React, { useState } from "react";
 import { useMedication } from "@/contexts/MedicationContext";
-import { ProcedureCard } from "@/components/procedures/ProcedureCard";
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Label } from "@/components/ui/label";
-import { Input } from "@/components/ui/input";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-
-const UK_HOSPITALS = [
-  "St Thomas' Hospital, London",
-  "Royal London Hospital",
-  "Guy's Hospital, London",
-  "King's College Hospital, London",
-  "University College Hospital, London",
-  "St Mary's Hospital, London",
-  "Queen Elizabeth Hospital, Birmingham",
-  "Addenbrooke's Hospital, Cambridge",
-  "Royal Infirmary of Edinburgh",
-  "John Radcliffe Hospital, Oxford"
-];
+import { AddProcedureForm } from "@/components/procedures/AddProcedureForm";
+import { RescheduleForm } from "@/components/procedures/RescheduleForm";
+import { ProceduresList } from "@/components/procedures/ProceduresList";
 
 const Procedures = () => {
   const { procedures, addProcedure } = useMedication();
@@ -55,7 +34,6 @@ const Procedures = () => {
   const upcomingProcedures = sortedProcedures.filter(
     proc => new Date(proc.date) >= today
   );
-
   const pastProcedures = sortedProcedures.filter(
     proc => new Date(proc.date) < today
   );
@@ -120,133 +98,45 @@ const Procedures = () => {
         </TabsList>
         
         <TabsContent value="upcoming">
-          {upcomingProcedures.length === 0 ? (
-            <Card>
-              <CardContent className="p-6 text-center text-muted-foreground">
-                No upcoming procedures scheduled.
-              </CardContent>
-            </Card>
-          ) : (
-            <div className="grid grid-cols-1 gap-4">
-              {upcomingProcedures.map((procedure) => (
-                <ProcedureCard 
-                  key={procedure.id} 
-                  procedure={procedure} 
-                  onReschedule={() => openRescheduleDialog(procedure.id)}
-                />
-              ))}
-            </div>
-          )}
+          <ProceduresList 
+            procedures={upcomingProcedures}
+            onReschedule={openRescheduleDialog}
+            type="upcoming"
+          />
         </TabsContent>
         
         <TabsContent value="past">
-          {pastProcedures.length === 0 ? (
-            <Card>
-              <CardContent className="p-6 text-center text-muted-foreground">
-                No past procedures found.
-              </CardContent>
-            </Card>
-          ) : (
-            <div className="grid grid-cols-1 gap-4">
-              {pastProcedures.map((procedure) => (
-                <ProcedureCard 
-                  key={procedure.id} 
-                  procedure={procedure}
-                  onReschedule={() => openRescheduleDialog(procedure.id)}
-                />
-              ))}
-            </div>
-          )}
+          <ProceduresList 
+            procedures={pastProcedures}
+            onReschedule={openRescheduleDialog}
+            type="past"
+          />
         </TabsContent>
       </Tabs>
 
-      <Dialog open={showAdd} onOpenChange={setShowAdd}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Add Procedure</DialogTitle>
-          </DialogHeader>
-          <form className="grid gap-3" onSubmit={handleAdd}>
-            <div className="grid gap-2">
-              <Label htmlFor="procedure-name">Procedure Name</Label>
-              <Input
-                id="procedure-name"
-                type="text"
-                value={procName}
-                onChange={(e) => setProcName(e.target.value)}
-                required
-              />
-            </div>
-            <div className="grid gap-2">
-              <Label htmlFor="procedure-date">Date</Label>
-              <Input
-                id="procedure-date"
-                type="date"
-                value={procDate}
-                onChange={(e) => setProcDate(e.target.value)}
-                required
-              />
-            </div>
-            <div className="grid gap-2">
-              <Label htmlFor="hospital-select">Hospital Location</Label>
-              <Select value={hospital} onValueChange={setHospital}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Select hospital" />
-                </SelectTrigger>
-                <SelectContent>
-                  {UK_HOSPITALS.map((h) => (
-                    <SelectItem key={h} value={h}>{h}</SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-            <div className="grid gap-2">
-              <Label htmlFor="doctor-name">Doctor Name</Label>
-              <Input
-                id="doctor-name"
-                type="text"
-                value={doctor}
-                onChange={(e) => setDoctor(e.target.value)}
-                required
-              />
-            </div>
-            <Button type="submit" className="mt-2">Add</Button>
-          </form>
-        </DialogContent>
-      </Dialog>
+      <AddProcedureForm
+        showAdd={showAdd}
+        setShowAdd={setShowAdd}
+        onSubmit={handleAdd}
+        procName={procName}
+        setProcName={setProcName}
+        procDate={procDate}
+        setProcDate={setProcDate}
+        hospital={hospital}
+        setHospital={setHospital}
+        doctor={doctor}
+        setDoctor={setDoctor}
+      />
 
-      <Dialog open={showReschedule} onOpenChange={setShowReschedule}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Reschedule Procedure</DialogTitle>
-          </DialogHeader>
-          <form className="grid gap-3" onSubmit={handleReschedule}>
-            <div className="grid gap-2">
-              <Label htmlFor="new-date">New Date</Label>
-              <Input
-                id="new-date"
-                type="date"
-                value={newDate}
-                onChange={(e) => setNewDate(e.target.value)}
-                required
-              />
-            </div>
-            <div className="grid gap-2">
-              <Label htmlFor="new-location">New Location</Label>
-              <Select value={newLocation} onValueChange={setNewLocation}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Select hospital" />
-                </SelectTrigger>
-                <SelectContent>
-                  {UK_HOSPITALS.map((h) => (
-                    <SelectItem key={h} value={h}>{h}</SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-            <Button type="submit" className="mt-2">Save Changes</Button>
-          </form>
-        </DialogContent>
-      </Dialog>
+      <RescheduleForm
+        showReschedule={showReschedule}
+        setShowReschedule={setShowReschedule}
+        onSubmit={handleReschedule}
+        newDate={newDate}
+        setNewDate={setNewDate}
+        newLocation={newLocation}
+        setNewLocation={setNewLocation}
+      />
     </div>
   );
 };
