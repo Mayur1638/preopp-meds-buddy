@@ -1,4 +1,3 @@
-
 import { createContext, useContext, ReactNode, useState, useEffect } from "react";
 import { Medication, TodayMedication, Procedure } from "@/types";
 import { useToast } from "@/hooks/use-toast";
@@ -37,10 +36,8 @@ export const MedicationProvider = ({ children }: { children: ReactNode }) => {
     addProcedure: addProcedureToDb
   } = useProcedures();
 
-  // Initialize todayMeds with an empty array to avoid the initial render issue
   const [todayMeds, setTodayMeds] = useState<TodayMedication[]>([]);
 
-  // Only update todayMeds when medications changes
   useEffect(() => {
     if (medications.length > 0) {
       setTodayMeds(generateTodayMedications(medications));
