@@ -1,5 +1,5 @@
 
-import { Medication, Procedure } from "@/types";
+import { Medication, Procedure, ProcedureDetail } from "@/types";
 
 export const MOCK_MEDICATIONS: Medication[] = [
   {
@@ -68,3 +68,15 @@ export const MOCK_PROCEDURES: Procedure[] = [
     created_at: new Date().toISOString()
   }
 ];
+
+// Add the missing MOCK_PROCEDURE_DETAILS
+export const MOCK_PROCEDURE_DETAILS: Record<string, ProcedureDetail> = {
+  "1": {
+    ...MOCK_PROCEDURES[0],
+    description: "Colonoscopy is a procedure that allows your doctor to look at the inner lining of your large intestine (rectum and colon). A thin, flexible tube called a colonoscope is used to look at the colon."
+  },
+  "2": {
+    ...MOCK_PROCEDURES[1],
+    description: "Knee arthroscopy is a surgical technique that can diagnose and treat problems in the knee joint. During the procedure, your surgeon will make a very small incision and insert a tiny camera — called an arthroscope — into your knee."
+  }
+};

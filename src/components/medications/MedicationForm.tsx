@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Medication } from "@/types";
 import { useMedication } from "@/contexts/MedicationContext";
@@ -69,6 +70,8 @@ export function MedicationForm({ medication, onClose, onSuccess }: MedicationFor
         time,
         dosage,
         instructions,
+        user_id: "1", // Default user ID - This will be replaced with the actual user ID when auth is implemented
+        created_at: new Date().toISOString()
       });
       toast({
         title: "Success",

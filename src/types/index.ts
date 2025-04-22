@@ -65,4 +65,9 @@ export interface Procedure {
   created_at: string;
 }
 
+// Add the missing ProcedureDetail type
+export interface ProcedureDetail extends Procedure {
+  description?: string;
+}
+
 export type ThemeMode = 'light' | 'dark';
