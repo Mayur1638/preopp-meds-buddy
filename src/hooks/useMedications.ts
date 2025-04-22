@@ -16,7 +16,18 @@ export const useMedications = () => {
       .order('created_at', { ascending: false });
 
     if (error) throw error;
-    return data;
+    
+    // Map Supabase data to our frontend Medication type
+    return data.map(item => ({
+      id: item.id,
+      name: item.medication_name || '',
+      quantity: item.medication_strengthosage || '',
+      dosage: item.dosage || '',
+      startDate: item.start_date || '',
+      endDate: item.end_date || '',
+      time: item.time || '',
+      instructions: item.special_instructions || '',
+    }));
   };
 
   const addMedication = async (medication: Omit<Medication, 'id'>) => {
@@ -36,7 +47,18 @@ export const useMedications = () => {
       .single();
 
     if (error) throw error;
-    return data;
+    
+    // Map to frontend type
+    return {
+      id: data.id,
+      name: data.medication_name || '',
+      quantity: data.medication_strengthosage || '',
+      dosage: data.dosage || '',
+      startDate: data.start_date || '',
+      endDate: data.end_date || '',
+      time: data.time || '',
+      instructions: data.special_instructions || '',
+    };
   };
 
   const updateMedication = async (id: string, updates: Partial<Medication>) => {
@@ -57,7 +79,18 @@ export const useMedications = () => {
       .single();
 
     if (error) throw error;
-    return data;
+    
+    // Map to frontend type
+    return {
+      id: data.id,
+      name: data.medication_name || '',
+      quantity: data.medication_strengthosage || '',
+      dosage: data.dosage || '',
+      startDate: data.start_date || '',
+      endDate: data.end_date || '',
+      time: data.time || '',
+      instructions: data.special_instructions || '',
+    };
   };
 
   const deleteMedication = async (id: string) => {
@@ -99,7 +132,7 @@ export const useMedications = () => {
   });
 
   return {
-    medications,
+    medications: medications || [],
     isLoading,
     addMedication: addMedicationMutation,
     updateMedication: updateMedicationMutation,

@@ -53,7 +53,7 @@ export const MOCK_PROCEDURES: Procedure[] = [
   }
 ];
 
-export const MOCK_PROCEDURE_DETAILS: Record<string, ProcedureDetail> = {
+export const data: Record<string, ProcedureDetail> = {
   "1": {
     id: "1",
     name: "Colonoscopy",

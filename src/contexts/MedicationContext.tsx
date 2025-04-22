@@ -1,9 +1,11 @@
-import { createContext, useContext, ReactNode } from "react";
+
+import { createContext, useContext, ReactNode, useState } from "react";
 import { Medication, TodayMedication, Procedure } from "@/types";
 import { useToast } from "@/hooks/use-toast";
 import { useMedications } from "@/hooks/useMedications";
 import { useProcedures } from "@/hooks/useProcedures";
 import { generateTodayMedications } from "@/utils/medicationUtils";
+import { data as mockProcedureDetails } from "@/data/mockMedications";
 
 type MedicationContextType = {
   medications: Medication[];
@@ -16,7 +18,7 @@ type MedicationContextType = {
   markMedicationSkipped: (id: string) => void;
   markMedicationPending: (id: string) => void;
   getProcedureDetails: (id: string) => any;
-  addProcedure: (procedure: Procedure) => Promise<void>;
+  addProcedure: (procedure: Omit<Procedure, "id">) => Promise<void>;
 };
 
 const MedicationContext = createContext<MedicationContextType | undefined>(undefined);
@@ -35,7 +37,15 @@ export const MedicationProvider = ({ children }: { children: ReactNode }) => {
     addProcedure: addProcedureToDb
   } = useProcedures();
 
-  const todayMedications = generateTodayMedications(medications);
+  // Create state for today's medications
+  const [todayMeds, setTodayMeds] = useState<TodayMedication[]>(
+    generateTodayMedications(medications)
+  );
+
+  // Update today's medications when medications change
+  useState(() => {
+    setTodayMeds(generateTodayMedications(medications));
+  });
 
   const addMedication = async (medication: Omit<Medication, "id">) => {
     try {
@@ -89,7 +99,7 @@ export const MedicationProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const markMedicationTaken = (id: string) => {
-    setTodayMedications(todayMedications.map((med) =>
+    setTodayMeds(todayMeds.map((med) =>
       med.id === id ? { ...med, status: 'taken' as const } : med
     ));
     toast({
@@ -99,7 +109,7 @@ export const MedicationProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const markMedicationSkipped = (id: string) => {
-    setTodayMedications(todayMedications.map((med) =>
+    setTodayMeds(todayMeds.map((med) =>
       med.id === id ? { ...med, status: 'skipped' as const } : med
     ));
     toast({
@@ -109,7 +119,7 @@ export const MedicationProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const markMedicationPending = (id: string) => {
-    setTodayMedications(todayMedications.map((med) =>
+    setTodayMeds(todayMeds.map((med) =>
       med.id === id ? { ...med, status: 'pending' as const } : med
     ));
     toast({
@@ -118,9 +128,9 @@ export const MedicationProvider = ({ children }: { children: ReactNode }) => {
     });
   };
 
-  const getProcedureDetails = (id: string) => MOCK_PROCEDURE_DETAILS[id];
+  const getProcedureDetails = (id: string) => mockProcedureDetails[id];
   
-  const addProcedure = async (procedure: Procedure) => {
+  const addProcedure = async (procedure: Omit<Procedure, "id">) => {
     try {
       await addProcedureToDb(procedure);
       toast({
@@ -141,7 +151,7 @@ export const MedicationProvider = ({ children }: { children: ReactNode }) => {
     <MedicationContext.Provider
       value={{
         medications,
-        todayMedications,
+        todayMedications: todayMeds,
         procedures,
         addMedication,
         updateMedication,

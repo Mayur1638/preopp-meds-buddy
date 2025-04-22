@@ -16,7 +16,15 @@ export const useProcedures = () => {
       .order('procedure_date', { ascending: true });
 
     if (error) throw error;
-    return data;
+    
+    // Map Supabase data to our frontend Procedure type
+    return data.map(item => ({
+      id: item.id,
+      name: item.procedure_name || '',
+      date: item.procedure_date || '',
+      doctor: item.doctor_name || '',
+      location: item.hospital_name || '',
+    }));
   };
 
   const addProcedure = async (procedure: Omit<Procedure, 'id'>) => {
@@ -33,7 +41,15 @@ export const useProcedures = () => {
       .single();
 
     if (error) throw error;
-    return data;
+    
+    // Map to frontend type
+    return {
+      id: data.id,
+      name: data.procedure_name || '',
+      date: data.procedure_date || '',
+      doctor: data.doctor_name || '',
+      location: data.hospital_name || '',
+    };
   };
 
   const updateProcedure = async (id: string, updates: Partial<Procedure>) => {
@@ -51,7 +67,15 @@ export const useProcedures = () => {
       .single();
 
     if (error) throw error;
-    return data;
+    
+    // Map to frontend type
+    return {
+      id: data.id,
+      name: data.procedure_name || '',
+      date: data.procedure_date || '',
+      doctor: data.doctor_name || '',
+      location: data.hospital_name || '',
+    };
   };
 
   const deleteProcedure = async (id: string) => {
@@ -93,7 +117,7 @@ export const useProcedures = () => {
   });
 
   return {
-    procedures,
+    procedures: procedures || [],
     isLoading,
     addProcedure: addProcedureMutation,
     updateProcedure: updateProcedureMutation,
