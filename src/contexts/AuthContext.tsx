@@ -1,5 +1,8 @@
+
 import { createContext, useContext, useState, useEffect, ReactNode } from "react";
 import { User } from "@/types";
+import { supabase } from "@/integrations/supabase/client";
+import { Session } from "@supabase/supabase-js";
 
 type AuthContextType = {
   user: User | null;
@@ -11,72 +14,78 @@ type AuthContextType = {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-// Update mock user email
-const MOCK_USERS = [
-  {
-    id: "1",
-    email: "archana@example.com",
-    password: "password",
-    name: "Archana Tripathi",
-  },
-];
-
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
+  const [session, setSession] = useState<Session | null>(null);
 
   useEffect(() => {
-    // Check for saved user
-    const savedUser = localStorage.getItem("user");
-    if (savedUser) {
-      setUser(JSON.parse(savedUser));
-    }
-    setLoading(false);
+    // Set up auth state listener
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      (event, currentSession) => {
+        setSession(currentSession);
+        if (currentSession?.user) {
+          const { id, email } = currentSession.user;
+          const name = currentSession.user.user_metadata?.name || "User";
+          setUser({ id, email: email || "", name });
+        } else {
+          setUser(null);
+        }
+        setLoading(false);
+      }
+    );
+
+    // Check for existing session
+    supabase.auth.getSession().then(({ data: { session: currentSession } }) => {
+      setSession(currentSession);
+      if (currentSession?.user) {
+        const { id, email } = currentSession.user;
+        const name = currentSession.user.user_metadata?.name || "User";
+        setUser({ id, email: email || "", name });
+      }
+      setLoading(false);
+    });
+
+    return () => {
+      subscription.unsubscribe();
+    };
   }, []);
 
   const signIn = async (email: string, password: string) => {
     setLoading(true);
     
-    // Simulate API call
-    await new Promise((resolve) => setTimeout(resolve, 1000));
+    const { error } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    });
     
-    const foundUser = MOCK_USERS.find(
-      (u) => u.email === email && u.password === password
-    );
-    
-    if (!foundUser) {
+    if (error) {
       setLoading(false);
-      throw new Error("Invalid credentials");
+      throw new Error(error.message);
     }
-    
-    const { password: _, ...userWithoutPassword } = foundUser;
-    setUser(userWithoutPassword);
-    localStorage.setItem("user", JSON.stringify(userWithoutPassword));
-    setLoading(false);
   };
 
   const signUp = async (email: string, password: string, name: string) => {
     setLoading(true);
     
-    // Simulate API call
-    await new Promise((resolve) => setTimeout(resolve, 1000));
+    const { error } = await supabase.auth.signUp({
+      email,
+      password,
+      options: {
+        data: {
+          name,
+        },
+      },
+    });
     
-    if (MOCK_USERS.some((u) => u.email === email)) {
+    if (error) {
       setLoading(false);
-      throw new Error("User already exists");
+      throw new Error(error.message);
     }
-    
-    const newUser = { id: Date.now().toString(), email, name };
-    
-    MOCK_USERS.push({ ...newUser, password });
-    setUser(newUser);
-    localStorage.setItem("user", JSON.stringify(newUser));
-    setLoading(false);
   };
 
-  const signOut = () => {
-    setUser(null);
-    localStorage.removeItem("user");
+  const signOut = async () => {
+    await supabase.auth.signOut();
   };
 
   return (
