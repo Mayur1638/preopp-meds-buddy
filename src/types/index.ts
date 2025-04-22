@@ -1,8 +1,9 @@
+
 // Auth types
 export interface User {
   id: string;
-  email: string;
-  name: string;
+  email: string | undefined;
+  name?: string; // Make name optional to match Supabase User type
 }
 
 // Medication types
