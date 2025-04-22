@@ -9,6 +9,72 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      emergency_contacts: {
+        Row: {
+          contact: string
+          created_at: string | null
+          id: string
+          name: string
+          relationship: string
+          user_id: string
+        }
+        Insert: {
+          contact: string
+          created_at?: string | null
+          id?: string
+          name: string
+          relationship: string
+          user_id: string
+        }
+        Update: {
+          contact?: string
+          created_at?: string | null
+          id?: string
+          name?: string
+          relationship?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      medications: {
+        Row: {
+          created_at: string | null
+          dosage: string
+          end_date: string
+          id: string
+          instructions: string | null
+          name: string
+          quantity: string
+          start_date: string
+          time: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          dosage: string
+          end_date: string
+          id?: string
+          instructions?: string | null
+          name: string
+          quantity: string
+          start_date: string
+          time: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          dosage?: string
+          end_date?: string
+          id?: string
+          instructions?: string | null
+          name?: string
+          quantity?: string
+          start_date?: string
+          time?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       patient_table: {
         Row: {
           blood_group: string | null
@@ -42,6 +108,90 @@ export type Database = {
           patient_height?: number | null
           patient_name?: string | null
           patient_weight?: number | null
+        }
+        Relationships: []
+      }
+      patients: {
+        Row: {
+          allergies: string | null
+          blood_group: string | null
+          created_at: string | null
+          dob: string
+          first_name: string
+          gender: string | null
+          height: number | null
+          id: string
+          last_name: string
+          user_id: string
+          weight: number | null
+        }
+        Insert: {
+          allergies?: string | null
+          blood_group?: string | null
+          created_at?: string | null
+          dob: string
+          first_name: string
+          gender?: string | null
+          height?: number | null
+          id?: string
+          last_name: string
+          user_id: string
+          weight?: number | null
+        }
+        Update: {
+          allergies?: string | null
+          blood_group?: string | null
+          created_at?: string | null
+          dob?: string
+          first_name?: string
+          gender?: string | null
+          height?: number | null
+          id?: string
+          last_name?: string
+          user_id?: string
+          weight?: number | null
+        }
+        Relationships: []
+      }
+      procedures: {
+        Row: {
+          created_at: string | null
+          date: string
+          doctor: string
+          donts: string[] | null
+          dos: string[] | null
+          id: string
+          location: string
+          name: string
+          notes: string | null
+          preparations: string[] | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          date: string
+          doctor: string
+          donts?: string[] | null
+          dos?: string[] | null
+          id?: string
+          location: string
+          name: string
+          notes?: string | null
+          preparations?: string[] | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          date?: string
+          doctor?: string
+          donts?: string[] | null
+          dos?: string[] | null
+          id?: string
+          location?: string
+          name?: string
+          notes?: string | null
+          preparations?: string[] | null
+          user_id?: string
         }
         Relationships: []
       }
