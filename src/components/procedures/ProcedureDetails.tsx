@@ -1,5 +1,5 @@
 
-import { Procedure } from "@/types";
+import { ProcedureDetail } from "@/types";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -8,7 +8,7 @@ import { Link } from "react-router-dom";
 import { Separator } from "@/components/ui/separator";
 
 interface ProcedureDetailsProps {
-  procedure: Procedure;
+  procedure: ProcedureDetail;
 }
 
 export function ProcedureDetailsView({ procedure }: ProcedureDetailsProps) {
