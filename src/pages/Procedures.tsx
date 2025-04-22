@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { useMedication } from "@/contexts/MedicationContext";
 import { ProcedureCard } from "@/components/procedures/ProcedureCard";
@@ -63,21 +64,7 @@ const Procedures = () => {
   const handleAdd = (e: React.FormEvent) => {
     e.preventDefault();
     if (!procName || !procDate || !hospital || !doctor) return;
-    
-    addProcedure({
-      id: Date.now().toString(),
-      user_id: "1", // This will be replaced with actual user ID when auth is implemented
-      name: procName,
-      date: procDate,
-      location: hospital,
-      doctor: doctor,
-      notes: "",
-      dos: [],
-      donts: [],
-      preparations: [],
-      created_at: new Date().toISOString()
-    });
-    
+    addProcedure({ id: Date.now().toString(), name: procName, date: procDate, location: hospital, doctor });
     setProcName("");
     setProcDate("");
     setHospital("");

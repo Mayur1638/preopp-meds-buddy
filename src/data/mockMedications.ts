@@ -4,79 +4,108 @@ import { Medication, Procedure, ProcedureDetail } from "@/types";
 export const MOCK_MEDICATIONS: Medication[] = [
   {
     id: "1",
-    user_id: "1",
     name: "Aspirin",
     quantity: "100mg",
-    start_date: "2025-04-15",
-    end_date: "2025-05-15",
+    startDate: "2025-04-15",
+    endDate: "2025-05-15",
     time: "08:00",
     dosage: "1 tablet",
-    instructions: "Take with food",
-    created_at: new Date().toISOString()
+    instructions: "Take with food"
   },
   {
     id: "2",
-    user_id: "1",
     name: "Metoprolol",
     quantity: "50mg",
-    start_date: "2025-04-10",
-    end_date: "2025-04-30",
+    startDate: "2025-04-10",
+    endDate: "2025-04-30",
     time: "12:00",
     dosage: "1 tablet",
-    instructions: "Take with water",
-    created_at: new Date().toISOString()
+    instructions: "Take with water"
   },
   {
     id: "3",
-    user_id: "1",
     name: "Simvastatin",
     quantity: "20mg",
-    start_date: "2025-04-01",
-    end_date: "2025-06-01",
+    startDate: "2025-04-01",
+    endDate: "2025-06-01",
     time: "20:00",
     dosage: "1 tablet",
-    instructions: "Take at bedtime",
-    created_at: new Date().toISOString()
+    instructions: "Take at bedtime"
   }
 ];
 
 export const MOCK_PROCEDURES: Procedure[] = [
   {
     id: "1",
-    user_id: "1",
+    name: "Colonoscopy",
+    date: "2025-05-10",
+    doctor: "Dr. Smith",
+    location: "General Hospital",
+    notes: "Outpatient procedure"
+  },
+  {
+    id: "2",
+    name: "Knee Arthroscopy",
+    date: "2025-06-15",
+    doctor: "Dr. Johnson",
+    location: "Orthopedic Center",
+    notes: "Arrive 2 hours before procedure"
+  }
+];
+
+export const MOCK_PROCEDURE_DETAILS: Record<string, ProcedureDetail> = {
+  "1": {
+    id: "1",
     name: "Colonoscopy",
     date: "2025-05-10",
     doctor: "Dr. Smith",
     location: "General Hospital",
     notes: "Outpatient procedure",
-    dos: ["Follow diet instructions", "Complete prep solution"],
-    donts: ["Don't eat solid food day before", "Don't take medications"],
-    preparations: ["Stop iron supplements", "Clear liquid diet"],
-    created_at: new Date().toISOString()
+    description: "A colonoscopy is a procedure to look at the inside of your colon.",
+    dos: [
+      "Follow the bowel preparation instructions exactly",
+      "Complete the entire prep solution",
+      "Stay hydrated with clear liquids",
+      "Arrange for someone to drive you home"
+    ],
+    donts: [
+      "Don't eat solid food the day before",
+      "Don't take medications that thin your blood",
+      "Don't wear jewelry or bring valuables",
+      "Don't drive for 24 hours after the procedure"
+    ],
+    preparations: [
+      "Stop iron supplements 5 days before",
+      "Clear liquid diet the day before",
+      "Complete bowel prep as directed",
+      "Arrive 30 minutes before appointment"
+    ]
   },
-  {
+  "2": {
     id: "2",
-    user_id: "1",
     name: "Knee Arthroscopy",
     date: "2025-06-15",
     doctor: "Dr. Johnson",
     location: "Orthopedic Center",
     notes: "Arrive 2 hours before procedure",
-    dos: ["Arrange transportation", "Follow fasting instructions"],
-    donts: ["Don't eat after midnight", "Don't wear contact lenses"],
-    preparations: ["Get blood work done", "Stop certain medications"],
-    created_at: new Date().toISOString()
-  }
-];
-
-// Add the missing MOCK_PROCEDURE_DETAILS
-export const MOCK_PROCEDURE_DETAILS: Record<string, ProcedureDetail> = {
-  "1": {
-    ...MOCK_PROCEDURES[0],
-    description: "Colonoscopy is a procedure that allows your doctor to look at the inner lining of your large intestine (rectum and colon). A thin, flexible tube called a colonoscope is used to look at the colon."
-  },
-  "2": {
-    ...MOCK_PROCEDURES[1],
-    description: "Knee arthroscopy is a surgical technique that can diagnose and treat problems in the knee joint. During the procedure, your surgeon will make a very small incision and insert a tiny camera — called an arthroscope — into your knee."
+    description: "Arthroscopy is a minimally invasive surgical procedure used to diagnose and treat problems inside a joint.",
+    dos: [
+      "Arrange for transportation home",
+      "Follow fasting instructions",
+      "Bring your insurance card",
+      "Wear loose, comfortable clothing"
+    ],
+    donts: [
+      "Don't eat or drink after midnight",
+      "Don't take aspirin or blood thinners",
+      "Don't wear contact lenses",
+      "Don't apply lotions or perfumes"
+    ],
+    preparations: [
+      "Get pre-op blood work done",
+      "Stop certain medications as directed",
+      "Prepare your home for recovery",
+      "Have ice packs ready for recovery"
+    ]
   }
 };

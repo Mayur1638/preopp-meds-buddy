@@ -6,7 +6,7 @@ export const generateTodayMedications = (medications: Medication[]): TodayMedica
   const currentHour = new Date().getHours();
   
   return medications
-    .filter(med => med.start_date <= today && med.end_date >= today)
+    .filter(med => med.startDate <= today && med.endDate >= today)
     .map(med => {
       const medHour = parseInt(med.time.split(':')[0]);
       const isImmediate = medHour >= currentHour && medHour <= currentHour + 1;
