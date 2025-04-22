@@ -28,7 +28,7 @@ export const useProcedures = () => {
         date: item.procedure_date || '',
         doctor: item.doctor_name || '',
         location: item.hospital_name || '',
-        notes: item.notes || '', // Make sure notes field exists, default to empty string
+        notes: '', // Default empty string for notes since it doesn't exist in DB
       }));
     } catch (error) {
       console.error("Error fetching procedures:", error);
@@ -46,7 +46,7 @@ export const useProcedures = () => {
           procedure_date: procedure.date,
           doctor_name: procedure.doctor,
           hospital_name: procedure.location,
-          notes: procedure.notes, // Make sure to include notes field
+          // Note: 'notes' field doesn't exist in the database schema
         })
         .select()
         .single();
@@ -71,7 +71,7 @@ export const useProcedures = () => {
         date: data.procedure_date || '',
         doctor: data.doctor_name || '',
         location: data.hospital_name || '',
-        notes: data.notes || '', // Make sure notes field exists, default to empty string
+        notes: '', // Default empty string for notes
       };
     } catch (error) {
       console.error("Error adding procedure:", error);
@@ -96,7 +96,7 @@ export const useProcedures = () => {
           procedure_date: updates.date,
           doctor_name: updates.doctor,
           hospital_name: updates.location,
-          notes: updates.notes, // Make sure to include notes field
+          // Note: 'notes' field doesn't exist in the database schema
         })
         .eq('id', id)
         .select()
@@ -122,7 +122,7 @@ export const useProcedures = () => {
         date: data.procedure_date || '',
         doctor: data.doctor_name || '',
         location: data.hospital_name || '',
-        notes: data.notes || '', // Make sure notes field exists, default to empty string
+        notes: '', // Default empty string for notes
       };
     } catch (error) {
       console.error("Error updating procedure:", error);

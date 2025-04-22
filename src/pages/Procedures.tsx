@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { useMedication } from "@/contexts/MedicationContext";
 import { ProcedureCard } from "@/components/procedures/ProcedureCard";
@@ -64,7 +63,15 @@ const Procedures = () => {
   const handleAdd = (e: React.FormEvent) => {
     e.preventDefault();
     if (!procName || !procDate || !hospital || !doctor) return;
-    addProcedure({ id: Date.now().toString(), name: procName, date: procDate, location: hospital, doctor });
+    
+    addProcedure({ 
+      name: procName, 
+      date: procDate, 
+      location: hospital, 
+      doctor: doctor,
+      notes: "" // Add empty notes field to match Procedure type
+    });
+    
     setProcName("");
     setProcDate("");
     setHospital("");
