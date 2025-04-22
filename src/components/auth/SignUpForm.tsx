@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
@@ -19,10 +18,12 @@ interface SignUpFormProps {
 }
 
 export function SignUpForm({ onToggleForm }: SignUpFormProps) {
+  const [healthId, setHealthId] = useState("");
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  
   const [dob, setDob] = useState("");
   const [height, setHeight] = useState("");
   const [weight, setWeight] = useState("");
@@ -36,8 +37,8 @@ export function SignUpForm({ onToggleForm }: SignUpFormProps) {
   const bloodGroups = ["A+", "A-", "B+", "B-", "O+", "O-", "AB+", "AB-"];
 
   const [isLoading, setIsLoading] = useState(false);
-  const [ehrLoading, setEhrLoading] = useState(false);
-  const [ehrSuccess, setEhrSuccess] = useState(false);
+  const [dataFetchLoading, setDataFetchLoading] = useState(false);
+  const [dataFetchSuccess, setDataFetchSuccess] = useState(false);
 
   const { signUp } = useAuth();
   const { toast } = useToast();
@@ -45,13 +46,10 @@ export function SignUpForm({ onToggleForm }: SignUpFormProps) {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!name || !email || !password || !confirmPassword ||
-        !dob || !height || !weight || !gender || !bloodGroup ||
-        !emergencyName || !emergencyContact || !emergencyRelation
-    ) {
+    if (!healthId || !name || !email || !password || !confirmPassword) {
       toast({
         title: "Error",
-        description: "Please fill in all fields",
+        description: "Please fill in all required fields: Health ID, Name, Email, and Password",
         variant: "destructive",
       });
       return;
@@ -70,12 +68,16 @@ export function SignUpForm({ onToggleForm }: SignUpFormProps) {
     try {
       await signUp(email, password, name);
       setIsLoading(false);
-      setEhrLoading(true);
-      // Mimic EHR fetch 6-7s, show modal
+      setDataFetchLoading(true);
+      
       setTimeout(() => {
-        setEhrLoading(false);
-        setEhrSuccess(true);
-      }, 6500);
+        setDataFetchLoading(false);
+        setDataFetchSuccess(true);
+        
+        setTimeout(() => {
+          setDataFetchSuccess(false);
+        }, 2000);
+      }, 7000);
     } catch (error) {
       setIsLoading(false);
       toast({
@@ -86,13 +88,11 @@ export function SignUpForm({ onToggleForm }: SignUpFormProps) {
     }
   };
 
-  const closeEhrSuccess = () => setEhrSuccess(false);
-
   return (
     <>
       <Card className="w-full max-w-md mx-auto shadow-lg animate-slide-in-bottom">
         <CardHeader className="space-y-1">
-          <CardTitle className="text-2xl font-bold text-center text-gradient">
+          <CardTitle className="text-2xl font-bold text-center text-primary">
             Create an Account
           </CardTitle>
           <CardDescription className="text-center">
@@ -103,11 +103,22 @@ export function SignUpForm({ onToggleForm }: SignUpFormProps) {
           <CardContent className="space-y-4">
             <div className="space-y-2">
               <Input
+                id="healthId"
+                placeholder="Health ID *"
+                value={healthId}
+                onChange={(e) => setHealthId(e.target.value)}
+                disabled={isLoading || dataFetchLoading}
+                className="focus:border-primary"
+                required
+              />
+            </div>
+            <div className="space-y-2">
+              <Input
                 id="name"
-                placeholder="Full Name"
+                placeholder="Full Name *"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                disabled={isLoading || ehrLoading}
+                disabled={isLoading || dataFetchLoading}
                 className="focus:border-primary"
                 required
               />
@@ -116,10 +127,10 @@ export function SignUpForm({ onToggleForm }: SignUpFormProps) {
               <Input
                 id="email"
                 type="email"
-                placeholder="Email"
+                placeholder="Email *"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                disabled={isLoading || ehrLoading}
+                disabled={isLoading || dataFetchLoading}
                 className="focus:border-primary"
                 required
               />
@@ -128,10 +139,10 @@ export function SignUpForm({ onToggleForm }: SignUpFormProps) {
               <Input
                 id="password"
                 type="password"
-                placeholder="Password"
+                placeholder="Password *"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                disabled={isLoading || ehrLoading}
+                disabled={isLoading || dataFetchLoading}
                 className="focus:border-primary"
                 required
               />
@@ -140,10 +151,10 @@ export function SignUpForm({ onToggleForm }: SignUpFormProps) {
               <Input
                 id="confirmPassword"
                 type="password"
-                placeholder="Confirm Password"
+                placeholder="Confirm Password *"
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
-                disabled={isLoading || ehrLoading}
+                disabled={isLoading || dataFetchLoading}
                 className="focus:border-primary"
                 required
               />
@@ -155,9 +166,8 @@ export function SignUpForm({ onToggleForm }: SignUpFormProps) {
                 type="date"
                 value={dob}
                 onChange={(e) => setDob(e.target.value)}
-                disabled={isLoading || ehrLoading}
+                disabled={isLoading || dataFetchLoading}
                 className="focus:border-primary"
-                required
               />
             </div>
             <div className="flex gap-2">
@@ -168,7 +178,7 @@ export function SignUpForm({ onToggleForm }: SignUpFormProps) {
                   type="number"
                   value={height}
                   onChange={(e) => setHeight(e.target.value)}
-                  disabled={isLoading || ehrLoading}
+                  disabled={isLoading || dataFetchLoading}
                   required
                 />
               </div>
@@ -179,7 +189,7 @@ export function SignUpForm({ onToggleForm }: SignUpFormProps) {
                   type="number"
                   value={weight}
                   onChange={(e) => setWeight(e.target.value)}
-                  disabled={isLoading || ehrLoading}
+                  disabled={isLoading || dataFetchLoading}
                   required
                 />
               </div>
@@ -191,7 +201,7 @@ export function SignUpForm({ onToggleForm }: SignUpFormProps) {
                 placeholder="Allergies"
                 value={allergies}
                 onChange={(e) => setAllergies(e.target.value)}
-                disabled={isLoading || ehrLoading}
+                disabled={isLoading || dataFetchLoading}
               />
             </div>
             <div className="space-y-2">
@@ -201,7 +211,7 @@ export function SignUpForm({ onToggleForm }: SignUpFormProps) {
                 value={gender}
                 className="w-full rounded border py-2 text-foreground bg-background"
                 onChange={(e) => setGender(e.target.value)}
-                disabled={isLoading || ehrLoading}
+                disabled={isLoading || dataFetchLoading}
                 required
               >
                 <option value="">Select Gender</option>
@@ -215,7 +225,7 @@ export function SignUpForm({ onToggleForm }: SignUpFormProps) {
                 value={bloodGroup}
                 className="w-full rounded border py-2 text-foreground bg-background"
                 onChange={(e) => setBloodGroup(e.target.value)}
-                disabled={isLoading || ehrLoading}
+                disabled={isLoading || dataFetchLoading}
                 required
               >
                 <option value="">Select Blood Group</option>
@@ -230,7 +240,7 @@ export function SignUpForm({ onToggleForm }: SignUpFormProps) {
                   placeholder="Name"
                   value={emergencyName}
                   onChange={(e) => setEmergencyName(e.target.value)}
-                  disabled={isLoading || ehrLoading}
+                  disabled={isLoading || dataFetchLoading}
                   required
                 />
                 <Input
@@ -238,7 +248,7 @@ export function SignUpForm({ onToggleForm }: SignUpFormProps) {
                   placeholder="Contact (phone/email)"
                   value={emergencyContact}
                   onChange={(e) => setEmergencyContact(e.target.value)}
-                  disabled={isLoading || ehrLoading}
+                  disabled={isLoading || dataFetchLoading}
                   required
                 />
                 <Input
@@ -246,7 +256,7 @@ export function SignUpForm({ onToggleForm }: SignUpFormProps) {
                   placeholder="Relationship"
                   value={emergencyRelation}
                   onChange={(e) => setEmergencyRelation(e.target.value)}
-                  disabled={isLoading || ehrLoading}
+                  disabled={isLoading || dataFetchLoading}
                   required
                 />
               </div>
@@ -256,7 +266,7 @@ export function SignUpForm({ onToggleForm }: SignUpFormProps) {
             <Button
               type="submit"
               className="w-full"
-              disabled={isLoading || ehrLoading}
+              disabled={isLoading || dataFetchLoading}
             >
               {isLoading ? "Creating account..." : "Create Account"}
             </Button>
@@ -266,7 +276,7 @@ export function SignUpForm({ onToggleForm }: SignUpFormProps) {
                 variant="link"
                 size="sm"
                 onClick={onToggleForm}
-                disabled={isLoading || ehrLoading}
+                disabled={isLoading || dataFetchLoading}
                 className="text-primary p-0"
               >
                 Sign in
@@ -275,27 +285,29 @@ export function SignUpForm({ onToggleForm }: SignUpFormProps) {
           </CardFooter>
         </form>
       </Card>
-      {/* EHR Fetch Loading Modal */}
-      <Dialog open={ehrLoading}>
-        <DialogContent>
+
+      <Dialog open={dataFetchLoading}>
+        <DialogContent className="sm:max-w-md">
           <DialogHeader>
-            <DialogTitle>Fetching Data</DialogTitle>
+            <DialogTitle>Fetching Your Medical Data</DialogTitle>
             <DialogDescription>
-              All your medical data is being fetched from EHR. Please wait...
+              Please wait while we fetch your medications and procedures...
             </DialogDescription>
           </DialogHeader>
+          <div className="flex justify-center py-6">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+          </div>
         </DialogContent>
       </Dialog>
-      {/* EHR Fetch Success Modal */}
-      <Dialog open={ehrSuccess} onOpenChange={closeEhrSuccess}>
-        <DialogContent>
+
+      <Dialog open={dataFetchSuccess}>
+        <DialogContent className="sm:max-w-md">
           <DialogHeader>
-            <DialogTitle>Data Fetch Successful</DialogTitle>
+            <DialogTitle className="text-success">Success!</DialogTitle>
             <DialogDescription>
-              Your medical records have been synced!
+              Your medical data has been successfully imported.
             </DialogDescription>
           </DialogHeader>
-          <Button onClick={closeEhrSuccess} className="mt-2" type="button">Continue</Button>
         </DialogContent>
       </Dialog>
     </>

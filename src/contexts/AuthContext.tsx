@@ -1,4 +1,3 @@
-
 import { createContext, useContext, useState, useEffect, ReactNode } from "react";
 import { User } from "@/types";
 
@@ -12,13 +11,13 @@ type AuthContextType = {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-// Mock users for demo
+// Update mock user email
 const MOCK_USERS = [
   {
     id: "1",
-    email: "user@example.com",
+    email: "archana@example.com",
     password: "password",
-    name: "John Doe",
+    name: "Archana Tripathi",
   },
 ];
 
