@@ -2,6 +2,8 @@
 import React from "react";
 import { FormInput } from "@/components/ui/form-input";
 import { Button } from "@/components/ui/button";
+import { useEmergencyContact } from "@/hooks/useEmergencyContact";
+import { toast } from "sonner";
 import {
   Select,
   SelectContent,
@@ -29,6 +31,23 @@ export const EmergencyContactForm: React.FC<EmergencyContactFormProps> = ({
   onCancel,
   onChange,
 }) => {
+  const { updateContact } = useEmergencyContact();
+
+  const handleSave = async () => {
+    try {
+      await updateContact({
+        contact_name: contact.name,
+        contact_number: Number(contact.contact),
+        contact_relation: contact.relationship,
+      });
+      onSave();
+      toast.success("Emergency contact updated successfully");
+    } catch (error) {
+      toast.error("Failed to update emergency contact");
+      console.error('Error updating emergency contact:', error);
+    }
+  };
+
   return (
     <div className="space-y-4">
       <FormInput 
@@ -44,6 +63,7 @@ export const EmergencyContactForm: React.FC<EmergencyContactFormProps> = ({
         value={contact.contact} 
         onChange={(e) => onChange('contact', e.target.value)} 
         placeholder="Phone/Email" 
+        type="number"
       />
       <div className="space-y-2">
         <label className="block text-xs">Relationship</label>
@@ -65,7 +85,7 @@ export const EmergencyContactForm: React.FC<EmergencyContactFormProps> = ({
       </div>
       <div className="flex justify-end space-x-2 pt-4">
         <Button variant="ghost" onClick={onCancel}>Cancel</Button>
-        <Button onClick={onSave}>Save Changes</Button>
+        <Button onClick={handleSave}>Save Changes</Button>
       </div>
     </div>
   );

@@ -16,6 +16,7 @@ export type Database = {
           contact_relation: string | null
           created_at: string
           id: string
+          user_id: string | null
         }
         Insert: {
           contact_name?: string | null
@@ -23,6 +24,7 @@ export type Database = {
           contact_relation?: string | null
           created_at?: string
           id?: string
+          user_id?: string | null
         }
         Update: {
           contact_name?: string | null
@@ -30,12 +32,13 @@ export type Database = {
           contact_relation?: string | null
           created_at?: string
           id?: string
+          user_id?: string | null
         }
         Relationships: [
           {
-            foreignKeyName: "emergency_contact_id_fkey"
-            columns: ["id"]
-            isOneToOne: true
+            foreignKeyName: "emergency_contact_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
             referencedRelation: "patient_table"
             referencedColumns: ["id"]
           },

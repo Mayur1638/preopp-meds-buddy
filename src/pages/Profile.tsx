@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { Sun } from "lucide-react";
@@ -7,11 +8,13 @@ import { ProfilePreview } from "@/components/profile/ProfilePreview";
 import { PatientProfileForm } from "@/components/profile/PatientProfileForm";
 import { EmergencyContactForm } from "@/components/profile/EmergencyContactForm";
 import { usePatientData } from "@/hooks/usePatientData";
+import { useEmergencyContact } from "@/hooks/useEmergencyContact";
 import { toast } from "sonner";
 
 export default function Profile() {
   const { user } = useAuth();
   const { patientData, updateProfile } = usePatientData();
+  const { emergencyContact } = useEmergencyContact();
   
   const [profile, setProfile] = useState({
     name: "Archana Tripathi",
@@ -23,9 +26,9 @@ export default function Profile() {
     gender: "",
     bloodGroup: "",
     emergencyContact: {
-      name: "",
-      contact: "",
-      relationship: "",
+      name: emergencyContact?.contact_name || "",
+      contact: emergencyContact?.contact_number?.toString() || "",
+      relationship: emergencyContact?.contact_relation || "",
     }
   });
   
@@ -122,7 +125,7 @@ export default function Profile() {
         {editingEmergencyContact && (
           <EmergencyContactForm
             contact={profile.emergencyContact}
-            onSave={handleSaveEmergencyContact}
+            onSave={() => setEditingEmergencyContact(false)}
             onCancel={() => setEditingEmergencyContact(false)}
             onChange={handleEmergencyContactChange}
           />
