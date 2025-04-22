@@ -68,12 +68,39 @@ export function SignUpForm({ onToggleForm }: SignUpFormProps) {
     try {
       await signUp(email, password, name);
       setIsLoading(false);
+
+      const { data: { session } } = await import("@/integrations/supabase/client").then(m => m.supabase.auth.getSession());
+      const userId = session?.user?.id;
+
+      if (userId) {
+        await import("@/integrations/supabase/client").then(async m => {
+          const { supabase } = m;
+          const { error } = await supabase
+            .from("patient_table")
+            .insert([{
+              id: userId,
+              pateint_name: name,
+              patient_dob: dob || null,
+              patient_height: height ? Number(height) : null,
+              patient_weight: weight ? Number(weight) : null,
+              gender: gender || null,
+              blood_group: bloodGroup || null,
+              allergies: allergies || null,
+            }]);
+
+          if (error) {
+            toast({
+              title: "Error",
+              description: "Could not complete your medical profile: " + error.message,
+              variant: "destructive",
+            });
+          }
+        });
+      }
       setDataFetchLoading(true);
-      
       setTimeout(() => {
         setDataFetchLoading(false);
         setDataFetchSuccess(true);
-        
         setTimeout(() => {
           setDataFetchSuccess(false);
         }, 2000);
