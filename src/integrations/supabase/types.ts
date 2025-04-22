@@ -75,42 +75,6 @@ export type Database = {
         }
         Relationships: []
       }
-      patient_table: {
-        Row: {
-          blood_group: string | null
-          created_at: string
-          id: string
-          patient_allergies: string | null
-          patient_dob: string | null
-          patient_gender: string | null
-          patient_height: number | null
-          patient_name: string | null
-          patient_weight: number | null
-        }
-        Insert: {
-          blood_group?: string | null
-          created_at?: string
-          id?: string
-          patient_allergies?: string | null
-          patient_dob?: string | null
-          patient_gender?: string | null
-          patient_height?: number | null
-          patient_name?: string | null
-          patient_weight?: number | null
-        }
-        Update: {
-          blood_group?: string | null
-          created_at?: string
-          id?: string
-          patient_allergies?: string | null
-          patient_dob?: string | null
-          patient_gender?: string | null
-          patient_height?: number | null
-          patient_name?: string | null
-          patient_weight?: number | null
-        }
-        Relationships: []
-      }
       patients: {
         Row: {
           allergies: string | null
@@ -192,6 +156,24 @@ export type Database = {
           notes?: string | null
           preparations?: string[] | null
           user_id?: string
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          created_at: string | null
+          full_name: string | null
+          id: string
+        }
+        Insert: {
+          created_at?: string | null
+          full_name?: string | null
+          id: string
+        }
+        Update: {
+          created_at?: string | null
+          full_name?: string | null
+          id?: string
         }
         Relationships: []
       }
