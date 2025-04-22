@@ -24,7 +24,7 @@ export function Layout({ children }: LayoutProps) {
           </div>
         </header>
       )}
-      <main className={`container mx-auto px-2 ${user ? 'pt-16 pb-24' : 'py-8'}`}>
+      <main className={`container mx-auto px-4 ${user ? 'pt-16 pb-24' : 'py-8'}`}>
         {children}
       </main>
       {user && <BottomNav />}

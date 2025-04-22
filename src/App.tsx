@@ -1,3 +1,4 @@
+
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -13,7 +14,6 @@ import Procedures from "./pages/Procedures";
 import ProcedureDetails from "./pages/ProcedureDetails";
 import NotFound from "./pages/NotFound";
 import Profile from "./pages/Profile";
-import { useEffect } from "react";
 
 const queryClient = new QueryClient();
 
@@ -48,13 +48,6 @@ const AuthRoute = ({ children }: { children: React.ReactNode }) => {
 };
 
 const AppRoutes = () => {
-  const { user } = useAuth();
-  
-  // Force dark mode
-  useEffect(() => {
-    document.documentElement.classList.add('dark');
-  }, []);
-  
   return (
     <Layout>
       <Routes>

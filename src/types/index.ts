@@ -39,3 +39,5 @@ export interface ProcedureDetail extends Procedure {
   donts: string[];
   preparations: string[];
 }
+
+export type ThemeMode = 'light' | 'dark';

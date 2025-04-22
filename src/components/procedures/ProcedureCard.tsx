@@ -3,14 +3,15 @@ import { Procedure } from "@/types";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Calendar, Clock } from "lucide-react";
+import { Calendar, Clock, MapPin } from "lucide-react";
 import { Link } from "react-router-dom";
 
 interface ProcedureCardProps {
   procedure: Procedure;
+  onReschedule?: () => void;
 }
 
-export function ProcedureCard({ procedure }: ProcedureCardProps) {
+export function ProcedureCard({ procedure, onReschedule }: ProcedureCardProps) {
   const procedureDate = new Date(procedure.date);
   const today = new Date();
   const daysUntil = Math.ceil((procedureDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
@@ -51,7 +52,7 @@ export function ProcedureCard({ procedure }: ProcedureCardProps) {
       <CardContent className="pb-2">
         <div className="flex flex-col space-y-2">
           <div className="flex items-center text-sm">
-            <Calendar className="h-4 w-4 mr-1 text-muted-foreground" />
+            <Calendar className="h-4 w-4 mr-1 text-white" />
             <span>{procedureDate.toLocaleDateString(undefined, { 
               weekday: 'short', 
               year: 'numeric', 
@@ -60,8 +61,8 @@ export function ProcedureCard({ procedure }: ProcedureCardProps) {
             })}</span>
           </div>
           {procedure.location && (
-            <div className="text-sm">
-              <span className="text-muted-foreground">Location: </span>
+            <div className="flex items-center text-sm">
+              <MapPin className="h-4 w-4 mr-1 text-white" />
               <span>{procedure.location}</span>
             </div>
           )}
@@ -73,12 +74,24 @@ export function ProcedureCard({ procedure }: ProcedureCardProps) {
           )}
         </div>
       </CardContent>
-      <CardFooter className="pt-2">
-        <Link to={`/procedures/${procedure.id}`} className="w-full">
+      <CardFooter className="pt-2 flex gap-2">
+        <Link to={`/procedures/${procedure.id}`} className="flex-1">
           <Button variant="outline" className="w-full">
             View Details
           </Button>
         </Link>
+        {onReschedule && daysUntil >= 0 && (
+          <Button 
+            variant="secondary" 
+            className="flex-1"
+            onClick={(e) => {
+              e.preventDefault();
+              onReschedule();
+            }}
+          >
+            Reschedule
+          </Button>
+        )}
       </CardFooter>
     </Card>
   );
