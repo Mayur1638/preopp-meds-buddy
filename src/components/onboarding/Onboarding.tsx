@@ -2,7 +2,7 @@
 import React, { useState } from "react";
 import { AppLogo } from "@/components/common/AppLogo";
 import { Button } from "@/components/ui/button";
-import { Pill, Capsule, Syringe } from "lucide-react";
+import { Pill, Flask, Syringe } from "lucide-react";
 
 const screens = [
   {
@@ -14,7 +14,7 @@ const screens = [
   {
     title: "Track Meds Easily",
     desc: "Stay on top of every dose and never miss your critical medication before surgery!",
-    Icon: Capsule,
+    Icon: Flask,
     iconColor: "var(--accent)",
   },
   {
