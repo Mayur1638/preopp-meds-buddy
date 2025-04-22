@@ -22,10 +22,15 @@ type ProfileData = {
 
 interface ProfilePreviewProps {
   profile: ProfileData;
-  onEdit: () => void;
+  onEditProfile: () => void;
+  onEditEmergencyContact: () => void;
 }
 
-export const ProfilePreview: React.FC<ProfilePreviewProps> = ({ profile, onEdit }) => {
+export const ProfilePreview: React.FC<ProfilePreviewProps> = ({ 
+  profile, 
+  onEditProfile,
+  onEditEmergencyContact 
+}) => {
   return (
     <div className="max-w-xl mx-auto pt-4 space-y-4">
       <Card>
@@ -34,7 +39,7 @@ export const ProfilePreview: React.FC<ProfilePreviewProps> = ({ profile, onEdit 
             <CardTitle className="text-lg">Patient Profile</CardTitle>
             <CardDescription className="text-xs">Preview your medical & personal details</CardDescription>
           </div>
-          <Button variant="ghost" size="icon" aria-label="Edit Profile" onClick={onEdit}>
+          <Button variant="ghost" size="icon" aria-label="Edit Profile" onClick={onEditProfile}>
             <Edit size={18} />
           </Button>
         </CardHeader>
@@ -52,10 +57,12 @@ export const ProfilePreview: React.FC<ProfilePreviewProps> = ({ profile, onEdit 
         </CardContent>
       </Card>
       
-      {/* Separate Emergency Contact Card */}
       <Card>
-        <CardHeader className="pb-2">
+        <CardHeader className="flex flex-row items-center justify-between pb-2">
           <CardTitle className="text-base">Emergency Contact</CardTitle>
+          <Button variant="ghost" size="icon" aria-label="Edit Emergency Contact" onClick={onEditEmergencyContact}>
+            <Edit size={18} />
+          </Button>
         </CardHeader>
         <CardContent className="p-4 pt-0">
           <div className="space-y-2 text-sm">
