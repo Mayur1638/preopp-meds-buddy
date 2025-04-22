@@ -1,53 +1,91 @@
-
-import { createContext, useContext, useState, useEffect, ReactNode } from "react";
+import { createContext, useContext, ReactNode } from "react";
 import { Medication, TodayMedication, Procedure } from "@/types";
 import { useToast } from "@/hooks/use-toast";
-import { MOCK_MEDICATIONS, MOCK_PROCEDURES, MOCK_PROCEDURE_DETAILS } from "@/data/mockMedications";
+import { useMedications } from "@/hooks/useMedications";
+import { useProcedures } from "@/hooks/useProcedures";
 import { generateTodayMedications } from "@/utils/medicationUtils";
 
 type MedicationContextType = {
   medications: Medication[];
   todayMedications: TodayMedication[];
   procedures: Procedure[];
-  addMedication: (medication: Omit<Medication, "id">) => void;
-  updateMedication: (medication: Medication) => void;
-  deleteMedication: (id: string) => void;
+  addMedication: (medication: Omit<Medication, "id">) => Promise<void>;
+  updateMedication: (medication: Medication) => Promise<void>;
+  deleteMedication: (id: string) => Promise<void>;
   markMedicationTaken: (id: string) => void;
   markMedicationSkipped: (id: string) => void;
   markMedicationPending: (id: string) => void;
-  getProcedureDetails: (id: string) => typeof MOCK_PROCEDURE_DETAILS[keyof typeof MOCK_PROCEDURE_DETAILS] | undefined;
-  addProcedure: (procedure: Procedure) => void;
+  getProcedureDetails: (id: string) => any;
+  addProcedure: (procedure: Procedure) => Promise<void>;
 };
 
 const MedicationContext = createContext<MedicationContextType | undefined>(undefined);
 
 export const MedicationProvider = ({ children }: { children: ReactNode }) => {
-  const [medications, setMedications] = useState<Medication[]>(MOCK_MEDICATIONS);
-  const [todayMedications, setTodayMedications] = useState<TodayMedication[]>([]);
-  const [procedures, setProcedures] = useState<Procedure[]>(MOCK_PROCEDURES);
   const { toast } = useToast();
+  const { 
+    medications = [], 
+    addMedication: addMedicationToDb,
+    updateMedication: updateMedicationInDb,
+    deleteMedication: deleteMedicationFromDb
+  } = useMedications();
+  
+  const {
+    procedures = [],
+    addProcedure: addProcedureToDb
+  } = useProcedures();
 
-  useEffect(() => {
-    const todaysMeds = generateTodayMedications(medications);
-    setTodayMedications(todaysMeds);
-  }, [medications]);
+  const todayMedications = generateTodayMedications(medications);
 
-  const addMedication = (medication: Omit<Medication, "id">) => {
-    const newMedication: Medication = {
-      ...medication,
-      id: Date.now().toString(),
-    };
-    setMedications([...medications, newMedication]);
+  const addMedication = async (medication: Omit<Medication, "id">) => {
+    try {
+      await addMedicationToDb(medication);
+      toast({
+        title: "Success",
+        description: "Medication added successfully",
+      });
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to add medication",
+        variant: "destructive",
+      });
+      throw error;
+    }
   };
 
-  const updateMedication = (medication: Medication) => {
-    setMedications(medications.map((med) => 
-      med.id === medication.id ? medication : med
-    ));
+  const updateMedication = async (medication: Medication) => {
+    try {
+      await updateMedicationInDb({ id: medication.id, updates: medication });
+      toast({
+        title: "Success",
+        description: "Medication updated successfully",
+      });
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to update medication",
+        variant: "destructive",
+      });
+      throw error;
+    }
   };
 
-  const deleteMedication = (id: string) => {
-    setMedications(medications.filter((med) => med.id !== id));
+  const deleteMedication = async (id: string) => {
+    try {
+      await deleteMedicationFromDb(id);
+      toast({
+        title: "Success",
+        description: "Medication deleted successfully",
+      });
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to delete medication",
+        variant: "destructive",
+      });
+      throw error;
+    }
   };
 
   const markMedicationTaken = (id: string) => {
@@ -82,12 +120,21 @@ export const MedicationProvider = ({ children }: { children: ReactNode }) => {
 
   const getProcedureDetails = (id: string) => MOCK_PROCEDURE_DETAILS[id];
   
-  const addProcedure = (procedure: Procedure) => {
-    setProcedures([...procedures, procedure]);
-    toast({
-      title: "Success",
-      description: "Procedure added successfully",
-    });
+  const addProcedure = async (procedure: Procedure) => {
+    try {
+      await addProcedureToDb(procedure);
+      toast({
+        title: "Success",
+        description: "Procedure added successfully",
+      });
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to add procedure",
+        variant: "destructive",
+      });
+      throw error;
+    }
   };
 
   return (
