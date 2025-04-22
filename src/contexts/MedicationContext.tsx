@@ -1,4 +1,3 @@
-
 import { createContext, useContext, ReactNode, useState, useEffect } from "react";
 import { Medication, TodayMedication, Procedure } from "@/types";
 import { useToast } from "@/hooks/use-toast";
@@ -37,12 +36,10 @@ export const MedicationProvider = ({ children }: { children: ReactNode }) => {
     addProcedure: addProcedureToDb
   } = useProcedures();
 
-  // Create state for today's medications
   const [todayMeds, setTodayMeds] = useState<TodayMedication[]>(
     generateTodayMedications(medications)
   );
 
-  // Update today's medications when medications change
   useEffect(() => {
     setTodayMeds(generateTodayMedications(medications));
   }, [medications]);
