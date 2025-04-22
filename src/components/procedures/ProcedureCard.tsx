@@ -52,7 +52,7 @@ export function ProcedureCard({ procedure, onReschedule }: ProcedureCardProps) {
       <CardContent className="pb-2">
         <div className="flex flex-col space-y-2">
           <div className="flex items-center text-sm">
-            <Calendar className="h-4 w-4 mr-1 text-white" />
+            <Calendar className="h-4 w-4 mr-1 text-muted-foreground" />
             <span>{procedureDate.toLocaleDateString(undefined, { 
               weekday: 'short', 
               year: 'numeric', 
@@ -62,7 +62,7 @@ export function ProcedureCard({ procedure, onReschedule }: ProcedureCardProps) {
           </div>
           {procedure.location && (
             <div className="flex items-center text-sm">
-              <MapPin className="h-4 w-4 mr-1 text-white" />
+              <MapPin className="h-4 w-4 mr-1 text-muted-foreground" />
               <span>{procedure.location}</span>
             </div>
           )}
