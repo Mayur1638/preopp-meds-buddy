@@ -92,11 +92,11 @@ export function MedicationList() {
                 </div>
                 <div className="text-sm">
                   <span className="text-muted-foreground">Start: </span>
-                  <span>{new Date(medication.startDate).toLocaleDateString()}</span>
+                  <span>{new Date(medication.start_date).toLocaleDateString()}</span>
                 </div>
                 <div className="text-sm">
                   <span className="text-muted-foreground">End: </span>
-                  <span>{new Date(medication.endDate).toLocaleDateString()}</span>
+                  <span>{new Date(medication.end_date).toLocaleDateString()}</span>
                 </div>
                 {medication.instructions && (
                   <div className="text-sm mt-2">

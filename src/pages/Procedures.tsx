@@ -64,7 +64,17 @@ const Procedures = () => {
   const handleAdd = (e: React.FormEvent) => {
     e.preventDefault();
     if (!procName || !procDate || !hospital || !doctor) return;
-    addProcedure({ id: Date.now().toString(), name: procName, date: procDate, location: hospital, doctor });
+    
+    addProcedure({ 
+      name: procName, 
+      date: procDate, 
+      location: hospital, 
+      doctor,
+      dos: [],
+      donts: [],
+      preparations: []
+    });
+    
     setProcName("");
     setProcDate("");
     setHospital("");

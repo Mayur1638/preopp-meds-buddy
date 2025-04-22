@@ -25,8 +25,8 @@ interface MedicationFormProps {
 export function MedicationForm({ medication, onClose, onSuccess }: MedicationFormProps) {
   const [name, setName] = useState(medication?.name || "");
   const [quantity, setQuantity] = useState(medication?.quantity || "");
-  const [startDate, setStartDate] = useState(medication?.startDate || new Date().toISOString().split('T')[0]);
-  const [endDate, setEndDate] = useState(medication?.endDate || "");
+  const [startDate, setStartDate] = useState(medication?.start_date || new Date().toISOString().split('T')[0]);
+  const [endDate, setEndDate] = useState(medication?.end_date || "");
   const [time, setTime] = useState(medication?.time || "");
   const [dosage, setDosage] = useState(medication?.dosage || "");
   const [instructions, setInstructions] = useState(medication?.instructions || "");
@@ -51,8 +51,8 @@ export function MedicationForm({ medication, onClose, onSuccess }: MedicationFor
         id: medication.id,
         name,
         quantity,
-        startDate,
-        endDate,
+        start_date: startDate,
+        end_date: endDate,
         time,
         dosage,
         instructions,
@@ -65,8 +65,8 @@ export function MedicationForm({ medication, onClose, onSuccess }: MedicationFor
       addMedication({
         name,
         quantity,
-        startDate,
-        endDate,
+        start_date: startDate,
+        end_date: endDate,
         time,
         dosage,
         instructions,
