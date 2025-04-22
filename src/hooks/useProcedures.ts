@@ -10,7 +10,7 @@ export const useProcedures = () => {
 
   const fetchProcedures = async () => {
     try {
-      // Since there may be RLS issues, we're using a more permissive approach
+      // With RLS disabled, we fetch all procedures and filter client-side
       const { data, error } = await supabase
         .from('procedures')
         .select('*')
@@ -28,7 +28,7 @@ export const useProcedures = () => {
         date: item.procedure_date || '',
         doctor: item.doctor_name || '',
         location: item.hospital_name || '',
-        notes: item.notes || '',
+        notes: item.notes || '', // Make sure notes field exists, default to empty string
       }));
     } catch (error) {
       console.error("Error fetching procedures:", error);
@@ -46,14 +46,14 @@ export const useProcedures = () => {
           procedure_date: procedure.date,
           doctor_name: procedure.doctor,
           hospital_name: procedure.location,
-          notes: procedure.notes,
+          notes: procedure.notes, // Make sure to include notes field
         })
         .select()
         .single();
 
       if (error) {
         console.error("Error adding procedure:", error);
-        // In case of RLS error, use mock data as fallback
+        // In case of error, use mock data as fallback
         return {
           id: `temp-${Date.now()}`,
           name: procedure.name,
@@ -71,7 +71,7 @@ export const useProcedures = () => {
         date: data.procedure_date || '',
         doctor: data.doctor_name || '',
         location: data.hospital_name || '',
-        notes: data.notes || '',
+        notes: data.notes || '', // Make sure notes field exists, default to empty string
       };
     } catch (error) {
       console.error("Error adding procedure:", error);
@@ -96,7 +96,7 @@ export const useProcedures = () => {
           procedure_date: updates.date,
           doctor_name: updates.doctor,
           hospital_name: updates.location,
-          notes: updates.notes,
+          notes: updates.notes, // Make sure to include notes field
         })
         .eq('id', id)
         .select()
@@ -122,7 +122,7 @@ export const useProcedures = () => {
         date: data.procedure_date || '',
         doctor: data.doctor_name || '',
         location: data.hospital_name || '',
-        notes: data.notes || '',
+        notes: data.notes || '', // Make sure notes field exists, default to empty string
       };
     } catch (error) {
       console.error("Error updating procedure:", error);
@@ -156,7 +156,7 @@ export const useProcedures = () => {
   const { data: procedures, isLoading } = useQuery({
     queryKey: ['procedures', user?.id],
     queryFn: fetchProcedures,
-    enabled: true, // Enable regardless of user ID
+    enabled: true, // Always enable the query regardless of user ID
   });
 
   const { mutateAsync: addProcedureMutation } = useMutation({

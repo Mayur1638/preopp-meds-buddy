@@ -1,5 +1,5 @@
 
-import { createContext, useContext, ReactNode, useState } from "react";
+import { createContext, useContext, ReactNode, useState, useEffect } from "react";
 import { Medication, TodayMedication, Procedure } from "@/types";
 import { useToast } from "@/hooks/use-toast";
 import { useMedications } from "@/hooks/useMedications";
@@ -43,9 +43,9 @@ export const MedicationProvider = ({ children }: { children: ReactNode }) => {
   );
 
   // Update today's medications when medications change
-  useState(() => {
+  useEffect(() => {
     setTodayMeds(generateTodayMedications(medications));
-  });
+  }, [medications]);
 
   const addMedication = async (medication: Omit<Medication, "id">) => {
     try {
