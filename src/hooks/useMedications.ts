@@ -1,4 +1,3 @@
-
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
@@ -10,19 +9,17 @@ export const useMedications = () => {
 
   const fetchMedications = async () => {
     try {
-      // Since there may be RLS issues, we're using a more permissive approach
+      // Add user_id filter directly in the query
       const { data, error } = await supabase
         .from('medications')
         .select('*')
+        .eq('user_id', user?.id)    // <<--- filter in DB
         .order('created_at', { ascending: false });
 
       if (error) throw error;
-      
-      // Filter client-side by user_id if needed
-      const filteredData = user?.id ? data.filter(item => item.user_id === user.id) : data;
-      
-      // Map Supabase data to our frontend Medication type
-      return filteredData.map(item => ({
+
+      // No need for further filtering as DB already filtered
+      return (data || []).map(item => ({
         id: item.id,
         name: item.medication_name || '',
         quantity: item.medication_strengthosage || '',

@@ -1,4 +1,3 @@
-
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
@@ -10,25 +9,23 @@ export const useProcedures = () => {
 
   const fetchProcedures = async () => {
     try {
-      // With RLS disabled, we fetch all procedures and filter client-side
+      // Add user_id filter directly in the query
       const { data, error } = await supabase
         .from('procedures')
         .select('*')
+        .eq('user_id', user?.id)  // <<--- filter in DB
         .order('procedure_date', { ascending: true });
 
       if (error) throw error;
-      
-      // Filter client-side by user_id if needed
-      const filteredData = user?.id ? data.filter(item => item.user_id === user.id) : data;
-      
-      // Map Supabase data to our frontend Procedure type
-      return filteredData.map(item => ({
+
+      // No need for further filtering here
+      return (data || []).map(item => ({
         id: item.id,
         name: item.procedure_name || '',
         date: item.procedure_date || '',
         doctor: item.doctor_name || '',
         location: item.hospital_name || '',
-        notes: '', // Default empty string for notes since it doesn't exist in DB
+        notes: '', // notes don't exist in DB schema
       }));
     } catch (error) {
       console.error("Error fetching procedures:", error);
