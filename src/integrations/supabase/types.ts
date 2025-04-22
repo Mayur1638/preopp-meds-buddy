@@ -9,7 +9,265 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
-      [_ in never]: never
+      emergency_contacts: {
+        Row: {
+          contact_number: string
+          created_at: string | null
+          id: string
+          name: string
+          relationship: string
+          user_id: string | null
+        }
+        Insert: {
+          contact_number: string
+          created_at?: string | null
+          id?: string
+          name: string
+          relationship: string
+          user_id?: string | null
+        }
+        Update: {
+          contact_number?: string
+          created_at?: string | null
+          id?: string
+          name?: string
+          relationship?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
+      medications: {
+        Row: {
+          created_at: string | null
+          dosage: string | null
+          end_date: string
+          id: string
+          instructions: string | null
+          name: string
+          quantity: string | null
+          start_date: string
+          time: string
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          dosage?: string | null
+          end_date: string
+          id?: string
+          instructions?: string | null
+          name: string
+          quantity?: string | null
+          start_date: string
+          time: string
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          dosage?: string | null
+          end_date?: string
+          id?: string
+          instructions?: string | null
+          name?: string
+          quantity?: string | null
+          start_date?: string
+          time?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
+      patient_medications: {
+        Row: {
+          created_at: string
+          dosage: string | null
+          end_date: string | null
+          id: number
+          medication_name: string
+          medication_quantity: string | null
+          patient_id: string | null
+          special_instructions: string | null
+          start_date: string | null
+          time: string | null
+        }
+        Insert: {
+          created_at?: string
+          dosage?: string | null
+          end_date?: string | null
+          id?: number
+          medication_name?: string
+          medication_quantity?: string | null
+          patient_id?: string | null
+          special_instructions?: string | null
+          start_date?: string | null
+          time?: string | null
+        }
+        Update: {
+          created_at?: string
+          dosage?: string | null
+          end_date?: string | null
+          id?: number
+          medication_name?: string
+          medication_quantity?: string | null
+          patient_id?: string | null
+          special_instructions?: string | null
+          start_date?: string | null
+          time?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "patient_medications_patient_id_fkey"
+            columns: ["patient_id"]
+            isOneToOne: false
+            referencedRelation: "patient_table"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      patient_procedures: {
+        Row: {
+          created_at: string
+          id: string
+          patient_id: string | null
+          procedure_date: string | null
+          procedure_doctor: string | null
+          procedure_hospital: string | null
+          procedure_name: string | null
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          patient_id?: string | null
+          procedure_date?: string | null
+          procedure_doctor?: string | null
+          procedure_hospital?: string | null
+          procedure_name?: string | null
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          patient_id?: string | null
+          procedure_date?: string | null
+          procedure_doctor?: string | null
+          procedure_hospital?: string | null
+          procedure_name?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "patient_procedures_patient_id_fkey"
+            columns: ["patient_id"]
+            isOneToOne: false
+            referencedRelation: "patient_table"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      patient_table: {
+        Row: {
+          blood_group: string | null
+          created_at: string
+          date_of_birth: string | null
+          gender: string | null
+          height: number | null
+          id: string
+          patient_name: string
+          weight: number | null
+        }
+        Insert: {
+          blood_group?: string | null
+          created_at?: string
+          date_of_birth?: string | null
+          gender?: string | null
+          height?: number | null
+          id?: string
+          patient_name?: string
+          weight?: number | null
+        }
+        Update: {
+          blood_group?: string | null
+          created_at?: string
+          date_of_birth?: string | null
+          gender?: string | null
+          height?: number | null
+          id?: string
+          patient_name?: string
+          weight?: number | null
+        }
+        Relationships: []
+      }
+      procedures: {
+        Row: {
+          created_at: string | null
+          date: string
+          description: string | null
+          doctor: string
+          donts: string[] | null
+          dos: string[] | null
+          id: string
+          location: string | null
+          name: string
+          notes: string | null
+          preparations: string[] | null
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          date: string
+          description?: string | null
+          doctor: string
+          donts?: string[] | null
+          dos?: string[] | null
+          id?: string
+          location?: string | null
+          name: string
+          notes?: string | null
+          preparations?: string[] | null
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          date?: string
+          description?: string | null
+          doctor?: string
+          donts?: string[] | null
+          dos?: string[] | null
+          id?: string
+          location?: string | null
+          name?: string
+          notes?: string | null
+          preparations?: string[] | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          blood_group: string | null
+          date_of_birth: string | null
+          full_name: string
+          height: number | null
+          id: string
+          updated_at: string | null
+          weight: number | null
+        }
+        Insert: {
+          blood_group?: string | null
+          date_of_birth?: string | null
+          full_name: string
+          height?: number | null
+          id: string
+          updated_at?: string | null
+          weight?: number | null
+        }
+        Update: {
+          blood_group?: string | null
+          date_of_birth?: string | null
+          full_name?: string
+          height?: number | null
+          id?: string
+          updated_at?: string | null
+          weight?: number | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never

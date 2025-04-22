@@ -2,52 +2,164 @@
 import { createContext, useContext, useState, useEffect, ReactNode } from "react";
 import { Medication, TodayMedication, Procedure } from "@/types";
 import { useToast } from "@/hooks/use-toast";
-import { MOCK_MEDICATIONS, MOCK_PROCEDURES, MOCK_PROCEDURE_DETAILS } from "@/data/mockMedications";
 import { generateTodayMedications } from "@/utils/medicationUtils";
+import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "./AuthContext";
 
 type MedicationContextType = {
   medications: Medication[];
   todayMedications: TodayMedication[];
   procedures: Procedure[];
-  addMedication: (medication: Omit<Medication, "id">) => void;
-  updateMedication: (medication: Medication) => void;
-  deleteMedication: (id: string) => void;
+  addMedication: (medication: Omit<Medication, "id" | "user_id" | "created_at">) => Promise<void>;
+  updateMedication: (medication: Medication) => Promise<void>;
+  deleteMedication: (id: string) => Promise<void>;
   markMedicationTaken: (id: string) => void;
   markMedicationSkipped: (id: string) => void;
   markMedicationPending: (id: string) => void;
-  getProcedureDetails: (id: string) => typeof MOCK_PROCEDURE_DETAILS[keyof typeof MOCK_PROCEDURE_DETAILS] | undefined;
-  addProcedure: (procedure: Procedure) => void;
+  getProcedureDetails: (id: string) => Promise<Procedure | null>;
+  addProcedure: (procedure: Omit<Procedure, "id" | "user_id" | "created_at">) => Promise<void>;
 };
 
 const MedicationContext = createContext<MedicationContextType | undefined>(undefined);
 
 export const MedicationProvider = ({ children }: { children: ReactNode }) => {
-  const [medications, setMedications] = useState<Medication[]>(MOCK_MEDICATIONS);
+  const [medications, setMedications] = useState<Medication[]>([]);
   const [todayMedications, setTodayMedications] = useState<TodayMedication[]>([]);
-  const [procedures, setProcedures] = useState<Procedure[]>(MOCK_PROCEDURES);
+  const [procedures, setProcedures] = useState<Procedure[]>([]);
   const { toast } = useToast();
+  const { user } = useAuth();
+
+  // Fetch medications and procedures when user changes
+  useEffect(() => {
+    if (user) {
+      fetchMedications();
+      fetchProcedures();
+    }
+  }, [user]);
 
   useEffect(() => {
     const todaysMeds = generateTodayMedications(medications);
     setTodayMedications(todaysMeds);
   }, [medications]);
 
-  const addMedication = (medication: Omit<Medication, "id">) => {
-    const newMedication: Medication = {
-      ...medication,
-      id: Date.now().toString(),
-    };
-    setMedications([...medications, newMedication]);
+  const fetchMedications = async () => {
+    if (!user) return;
+
+    try {
+      const { data, error } = await supabase
+        .from('medications')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+      if (error) throw error;
+      setMedications(data || []);
+    } catch (error: any) {
+      toast({
+        title: "Error fetching medications",
+        description: error.message,
+        variant: "destructive",
+      });
+    }
   };
 
-  const updateMedication = (medication: Medication) => {
-    setMedications(medications.map((med) => 
-      med.id === medication.id ? medication : med
-    ));
+  const fetchProcedures = async () => {
+    if (!user) return;
+
+    try {
+      const { data, error } = await supabase
+        .from('procedures')
+        .select('*')
+        .order('date', { ascending: true });
+
+      if (error) throw error;
+      setProcedures(data || []);
+    } catch (error: any) {
+      toast({
+        title: "Error fetching procedures",
+        description: error.message,
+        variant: "destructive",
+      });
+    }
   };
 
-  const deleteMedication = (id: string) => {
-    setMedications(medications.filter((med) => med.id !== id));
+  const addMedication = async (medication: Omit<Medication, "id" | "user_id" | "created_at">) => {
+    if (!user) return;
+
+    try {
+      const { error } = await supabase
+        .from('medications')
+        .insert([{ ...medication, user_id: user.id }]);
+
+      if (error) throw error;
+
+      toast({
+        title: "Success",
+        description: "Medication added successfully",
+      });
+
+      await fetchMedications();
+    } catch (error: any) {
+      toast({
+        title: "Error adding medication",
+        description: error.message,
+        variant: "destructive",
+      });
+      throw error;
+    }
+  };
+
+  const updateMedication = async (medication: Medication) => {
+    if (!user) return;
+
+    try {
+      const { error } = await supabase
+        .from('medications')
+        .update(medication)
+        .eq('id', medication.id);
+
+      if (error) throw error;
+
+      toast({
+        title: "Success",
+        description: "Medication updated successfully",
+      });
+
+      await fetchMedications();
+    } catch (error: any) {
+      toast({
+        title: "Error updating medication",
+        description: error.message,
+        variant: "destructive",
+      });
+      throw error;
+    }
+  };
+
+  const deleteMedication = async (id: string) => {
+    if (!user) return;
+
+    try {
+      const { error } = await supabase
+        .from('medications')
+        .delete()
+        .eq('id', id);
+
+      if (error) throw error;
+
+      toast({
+        title: "Success",
+        description: "Medication deleted successfully",
+      });
+
+      await fetchMedications();
+    } catch (error: any) {
+      toast({
+        title: "Error deleting medication",
+        description: error.message,
+        variant: "destructive",
+      });
+      throw error;
+    }
   };
 
   const markMedicationTaken = (id: string) => {
@@ -80,14 +192,52 @@ export const MedicationProvider = ({ children }: { children: ReactNode }) => {
     });
   };
 
-  const getProcedureDetails = (id: string) => MOCK_PROCEDURE_DETAILS[id];
-  
-  const addProcedure = (procedure: Procedure) => {
-    setProcedures([...procedures, procedure]);
-    toast({
-      title: "Success",
-      description: "Procedure added successfully",
-    });
+  const getProcedureDetails = async (id: string): Promise<Procedure | null> => {
+    if (!user) return null;
+
+    try {
+      const { data, error } = await supabase
+        .from('procedures')
+        .select('*')
+        .eq('id', id)
+        .single();
+
+      if (error) throw error;
+      return data;
+    } catch (error: any) {
+      toast({
+        title: "Error fetching procedure details",
+        description: error.message,
+        variant: "destructive",
+      });
+      return null;
+    }
+  };
+
+  const addProcedure = async (procedure: Omit<Procedure, "id" | "user_id" | "created_at">) => {
+    if (!user) return;
+
+    try {
+      const { error } = await supabase
+        .from('procedures')
+        .insert([{ ...procedure, user_id: user.id }]);
+
+      if (error) throw error;
+
+      toast({
+        title: "Success",
+        description: "Procedure added successfully",
+      });
+
+      await fetchProcedures();
+    } catch (error: any) {
+      toast({
+        title: "Error adding procedure",
+        description: error.message,
+        variant: "destructive",
+      });
+      throw error;
+    }
   };
 
   return (
