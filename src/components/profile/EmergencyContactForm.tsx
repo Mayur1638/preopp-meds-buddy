@@ -34,10 +34,17 @@ export const EmergencyContactForm: React.FC<EmergencyContactFormProps> = ({
   const { updateContact } = useEmergencyContact();
 
   const handleSave = async () => {
+    // Validate phone number
+    const phoneNumber = Number(contact.contact);
+    if (isNaN(phoneNumber)) {
+      toast.error("Please enter a valid phone number");
+      return;
+    }
+
     try {
       await updateContact({
         contact_name: contact.name,
-        contact_number: Number(contact.contact),
+        contact_number: phoneNumber,
         contact_relation: contact.relationship,
       });
       onSave();
@@ -62,8 +69,8 @@ export const EmergencyContactForm: React.FC<EmergencyContactFormProps> = ({
         name="contact" 
         value={contact.contact} 
         onChange={(e) => onChange('contact', e.target.value)} 
-        placeholder="Phone/Email" 
-        type="number"
+        placeholder="Phone Number" 
+        type="tel"
       />
       <div className="space-y-2">
         <label className="block text-xs">Relationship</label>

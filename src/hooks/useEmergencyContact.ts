@@ -25,20 +25,43 @@ export const useEmergencyContact = () => {
   };
 
   const updateEmergencyContact = async (updates: EmergencyContact) => {
-    const { data, error } = await supabase
+    // First check if a record exists for this user
+    const { data: existingContact } = await supabase
       .from('emergency_contact')
-      .upsert(
-        {
+      .select('id')
+      .eq('user_id', user?.id)
+      .maybeSingle();
+    
+    let result;
+    
+    if (existingContact) {
+      // Update existing record
+      result = await supabase
+        .from('emergency_contact')
+        .update({
+          contact_name: updates.contact_name,
+          contact_number: updates.contact_number,
+          contact_relation: updates.contact_relation
+        })
+        .eq('user_id', user?.id)
+        .select()
+        .single();
+    } else {
+      // Insert new record
+      result = await supabase
+        .from('emergency_contact')
+        .insert({
           user_id: user?.id,
-          ...updates
-        },
-        { onConflict: 'user_id' }
-      )
-      .select()
-      .single();
-
-    if (error) throw error;
-    return data;
+          contact_name: updates.contact_name,
+          contact_number: updates.contact_number,
+          contact_relation: updates.contact_relation
+        })
+        .select()
+        .single();
+    }
+    
+    if (result.error) throw result.error;
+    return result.data;
   };
 
   const { data: emergencyContact, isLoading } = useQuery({

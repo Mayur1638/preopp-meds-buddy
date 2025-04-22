@@ -1,5 +1,5 @@
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { Sun } from "lucide-react";
 import { Switch } from "@/components/ui/switch";
@@ -13,24 +13,54 @@ import { toast } from "sonner";
 
 export default function Profile() {
   const { user } = useAuth();
-  const { patientData, updateProfile } = usePatientData();
-  const { emergencyContact } = useEmergencyContact();
+  const { patientData, updateProfile, isLoading: profileLoading } = usePatientData();
+  const { emergencyContact, isLoading: contactLoading } = useEmergencyContact();
   
   const [profile, setProfile] = useState({
-    name: "Archana Tripathi",
-    email: "archana@example.com",
-    dob: "",
-    height: "",
-    weight: "",
-    allergies: "",
-    gender: "",
-    bloodGroup: "",
+    name: patientData?.pateint_name || "Archana Tripathi",
+    email: user?.email || "archana@example.com",
+    dob: patientData?.patient_dob || "",
+    height: patientData?.patient_height?.toString() || "",
+    weight: patientData?.patient_weight?.toString() || "",
+    allergies: patientData?.allergies || "",
+    gender: patientData?.gender || "",
+    bloodGroup: patientData?.blood_group || "",
     emergencyContact: {
       name: emergencyContact?.contact_name || "",
       contact: emergencyContact?.contact_number?.toString() || "",
       relationship: emergencyContact?.contact_relation || "",
     }
   });
+  
+  // Update profile state when data is loaded
+  useEffect(() => {
+    if (patientData) {
+      setProfile(prev => ({
+        ...prev,
+        name: patientData.pateint_name || prev.name,
+        dob: patientData.patient_dob || prev.dob,
+        height: patientData.patient_height?.toString() || prev.height,
+        weight: patientData.patient_weight?.toString() || prev.weight,
+        allergies: patientData.allergies || prev.allergies,
+        gender: patientData.gender || prev.gender,
+        bloodGroup: patientData.blood_group || prev.bloodGroup,
+      }));
+    }
+  }, [patientData]);
+
+  // Update emergency contact when data is loaded
+  useEffect(() => {
+    if (emergencyContact) {
+      setProfile(prev => ({
+        ...prev,
+        emergencyContact: {
+          name: emergencyContact.contact_name || "",
+          contact: emergencyContact.contact_number?.toString() || "",
+          relationship: emergencyContact.contact_relation || "",
+        }
+      }));
+    }
+  }, [emergencyContact]);
   
   const [editingProfile, setEditingProfile] = useState(false);
   const [editingEmergencyContact, setEditingEmergencyContact] = useState(false);
@@ -66,13 +96,8 @@ export default function Profile() {
       toast.success("Profile updated successfully");
     } catch (error) {
       toast.error("Failed to update profile");
+      console.error('Error updating profile:', error);
     }
-  };
-
-  const handleSaveEmergencyContact = () => {
-    // TODO: Implement emergency contact save functionality
-    setEditingEmergencyContact(false);
-    toast.success("Emergency contact updated");
   };
 
   const toggleTheme = () => {
@@ -85,6 +110,10 @@ export default function Profile() {
       document.documentElement.classList.add('dark');
     }
   };
+
+  if (profileLoading || contactLoading) {
+    return <div className="flex justify-center items-center h-screen">Loading profile data...</div>;
+  }
 
   if (!editingProfile && !editingEmergencyContact) {
     return (
