@@ -1,3 +1,4 @@
+
 import { createContext, useContext, ReactNode, useState, useEffect } from "react";
 import { Medication, TodayMedication, Procedure } from "@/types";
 import { useToast } from "@/hooks/use-toast";
@@ -18,6 +19,7 @@ type MedicationContextType = {
   markMedicationPending: (id: string) => void;
   getProcedureDetails: (id: string) => any;
   addProcedure: (procedure: Omit<Procedure, "id">) => Promise<void>;
+  updateProcedure: (procedure: Procedure) => Promise<void>;
 };
 
 const MedicationContext = createContext<MedicationContextType | undefined>(undefined);
@@ -33,7 +35,8 @@ export const MedicationProvider = ({ children }: { children: ReactNode }) => {
   
   const {
     procedures = [],
-    addProcedure: addProcedureToDb
+    addProcedure: addProcedureToDb,
+    updateProcedure: updateProcedureInDb
   } = useProcedures();
 
   const [todayMeds, setTodayMeds] = useState<TodayMedication[]>([]);
@@ -144,6 +147,23 @@ export const MedicationProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
+  const updateProcedure = async (procedure: Procedure) => {
+    try {
+      await updateProcedureInDb({ id: procedure.id, updates: procedure });
+      toast({
+        title: "Success",
+        description: "Procedure updated successfully",
+      });
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to update procedure",
+        variant: "destructive",
+      });
+      throw error;
+    }
+  };
+
   return (
     <MedicationContext.Provider
       value={{
@@ -158,6 +178,7 @@ export const MedicationProvider = ({ children }: { children: ReactNode }) => {
         markMedicationPending,
         getProcedureDetails,
         addProcedure,
+        updateProcedure,
       }}
     >
       {children}

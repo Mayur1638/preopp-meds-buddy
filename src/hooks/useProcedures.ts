@@ -89,6 +89,7 @@ export const useProcedures = () => {
 
   const updateProcedure = async (id: string, updates: Partial<Procedure>) => {
     try {
+      console.log("Updating procedure:", id, updates);
       const { data, error } = await supabase
         .from('procedures')
         .update({
@@ -122,7 +123,7 @@ export const useProcedures = () => {
         date: data.procedure_date || '',
         doctor: data.doctor_name || '',
         location: data.hospital_name || '',
-        notes: '', // Default empty string for notes
+        notes: updates.notes || '', // Keep the notes even though it's not in DB
       };
     } catch (error) {
       console.error("Error updating procedure:", error);

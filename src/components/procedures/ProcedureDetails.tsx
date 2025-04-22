@@ -3,15 +3,21 @@ import { ProcedureDetail } from "@/types";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Calendar, MapPin, User, AlertTriangle, CheckCircle, ArrowLeft } from "lucide-react";
+import { Calendar, MapPin, User, AlertTriangle, CheckCircle, ArrowLeft, Edit } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Separator } from "@/components/ui/separator";
+import { useState } from "react";
+import { EditProcedureForm } from "./EditProcedureForm";
+import { useMedication } from "@/contexts/MedicationContext";
+import { toast } from "@/hooks/use-toast";
 
 interface ProcedureDetailsProps {
   procedure: ProcedureDetail;
 }
 
 export function ProcedureDetailsView({ procedure }: ProcedureDetailsProps) {
+  const [showEditForm, setShowEditForm] = useState(false);
+  const { updateProcedure } = useMedication();
   const procedureDate = new Date(procedure.date);
   const today = new Date();
   const daysUntil = Math.ceil((procedureDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
@@ -35,6 +41,23 @@ export function ProcedureDetailsView({ procedure }: ProcedureDetailsProps) {
     badgeText = `${daysUntil} days away`;
     badgeVariant = "secondary";
   }
+
+  const handleUpdateProcedure = async (updatedProcedure: any) => {
+    try {
+      await updateProcedure(updatedProcedure);
+      setShowEditForm(false);
+      toast({
+        title: "Procedure updated",
+        description: "The procedure details have been updated successfully.",
+      });
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to update procedure. Please try again.",
+        variant: "destructive",
+      });
+    }
+  };
   
   return (
     <div className="space-y-6">
@@ -45,9 +68,20 @@ export function ProcedureDetailsView({ procedure }: ProcedureDetailsProps) {
             Back to Procedures
           </Button>
         </Link>
-        <Badge variant={badgeVariant} className="text-sm">
-          {badgeText}
-        </Badge>
+        <div className="flex items-center gap-2">
+          <Badge variant={badgeVariant} className="text-sm">
+            {badgeText}
+          </Badge>
+          <Button 
+            variant="outline" 
+            size="sm" 
+            onClick={() => setShowEditForm(true)}
+            className="flex items-center gap-1"
+          >
+            <Edit className="h-4 w-4" />
+            Edit
+          </Button>
+        </div>
       </div>
       
       <Card className="shadow-md">
@@ -158,6 +192,13 @@ export function ProcedureDetailsView({ procedure }: ProcedureDetailsProps) {
           )}
         </CardContent>
       </Card>
+
+      <EditProcedureForm
+        procedure={procedure}
+        isOpen={showEditForm}
+        onClose={() => setShowEditForm(false)}
+        onSubmit={handleUpdateProcedure}
+      />
     </div>
   );
 }
