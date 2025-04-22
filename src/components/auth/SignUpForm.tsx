@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
@@ -67,7 +66,7 @@ export function SignUpForm({ onToggleForm }: SignUpFormProps) {
     
     setIsLoading(true);
     try {
-      await signUp(email, password, name, healthId);
+      await signUp(email, password, name);
       setIsLoading(false);
       setDataFetchLoading(true);
       
