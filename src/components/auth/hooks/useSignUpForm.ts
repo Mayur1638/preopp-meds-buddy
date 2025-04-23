@@ -1,10 +1,8 @@
-
 import { useForm } from "react-hook-form";
 import { useState } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useToast } from "@/components/ui/use-toast";
 
-// Types for form data
 export interface SignUpFormValues {
   healthId: string;
   name: string;
@@ -45,7 +43,9 @@ export function useSignUpForm() {
       emergencyName: "",
       emergencyContact: "",
       emergencyRelation: "",
-    }
+    },
+    mode: "onBlur",
+    criteriaMode: "all",
   });
 
   const handleSubmit = async (values: SignUpFormValues) => {
@@ -75,22 +75,20 @@ export function useSignUpForm() {
       return;
     }
 
-    if (password !== confirmPassword) {
-      toast({
-        title: "Error",
-        description: "Passwords do not match",
-        variant: "destructive",
-      });
+    if (password.length < 8) {
+      form.setError("password", { type: "manual", message: "Password must be at least 8 characters." });
       return;
     }
 
-    form.setValue("password", "");
-    form.setValue("confirmPassword", "");
+    if (password !== confirmPassword) {
+      form.setError("confirmPassword", { type: "manual", message: "Passwords do not match." });
+      return;
+    }
+
     form.clearErrors();
 
     try {
       await signUp(email, password, name);
-      // Add patient profile entry
       const { data: { session } } = await import("@/integrations/supabase/client").then(m => m.supabase.auth.getSession());
       const userId = session?.user?.id;
 
@@ -125,6 +123,9 @@ export function useSignUpForm() {
         setDataFetchSuccess(true);
         setTimeout(() => setDataFetchSuccess(false), 2000);
       }, 2500);
+
+      form.setValue("password", "");
+      form.setValue("confirmPassword", "");
     } catch (error) {
       toast({
         title: "Error",

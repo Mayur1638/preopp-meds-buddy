@@ -13,6 +13,7 @@ interface SignUpFormProps {
 
 export function SignUpForm({ onToggleForm }: SignUpFormProps) {
   const { form, handleSubmit, dataFetchLoading, dataFetchSuccess } = useSignUpForm();
+  const { formState: { errors }, register } = form;
 
   return (
     <>
@@ -26,53 +27,69 @@ export function SignUpForm({ onToggleForm }: SignUpFormProps) {
               Enter your information to get started
             </CardDescription>
           </CardHeader>
-          <form onSubmit={form.handleSubmit(handleSubmit)}>
+          <form onSubmit={form.handleSubmit(handleSubmit)} noValidate>
             <CardContent className="space-y-4">
               <div className="space-y-2">
-                <Input placeholder="Health ID *" {...form.register("healthId", { required: true })} disabled={dataFetchLoading} className="focus:border-primary" />
+                <Input placeholder="Health ID *" {...register("healthId", { required: "Health ID is required." })} disabled={dataFetchLoading} className="focus:border-primary" />
+                {errors.healthId && <p className="text-xs text-destructive">{errors.healthId.message as string}</p>}
               </div>
               <div className="space-y-2">
-                <Input placeholder="Full Name *" {...form.register("name", { required: true })} disabled={dataFetchLoading} className="focus:border-primary" />
+                <Input placeholder="Full Name *" {...register("name", { required: "Full Name is required." })} disabled={dataFetchLoading} className="focus:border-primary" />
+                {errors.name && <p className="text-xs text-destructive">{errors.name.message as string}</p>}
               </div>
               <div className="space-y-2">
-                <Input type="email" placeholder="Email *" {...form.register("email", { required: true })} disabled={dataFetchLoading} className="focus:border-primary" />
+                <Input type="email" placeholder="Email *" {...register("email", { required: "Email is required.", pattern: { value: /\S+@\S+\.\S+/, message: "Enter a valid email address." } })} disabled={dataFetchLoading} className="focus:border-primary" />
+                {errors.email && <p className="text-xs text-destructive">{errors.email.message as string}</p>}
               </div>
               <div className="space-y-2">
-                <Input type="password" placeholder="Password *" {...form.register("password", { required: true })} disabled={dataFetchLoading} className="focus:border-primary" />
+                <Input type="password" placeholder="Password *" {...register("password", {
+                  required: "Password is required.",
+                  minLength: { value: 8, message: "Password must be at least 8 characters." }
+                })} disabled={dataFetchLoading} className="focus:border-primary" />
+                {errors.password && <p className="text-xs text-destructive">{errors.password.message as string}</p>}
               </div>
               <div className="space-y-2">
-                <Input type="password" placeholder="Confirm Password *" {...form.register("confirmPassword", { required: true })} disabled={dataFetchLoading} className="focus:border-primary" />
+                <Input type="password" placeholder="Confirm Password *" {...register("confirmPassword", {
+                  required: "Please confirm your password.",
+                  validate: value => value === form.getValues("password") || "Passwords do not match."
+                })} disabled={dataFetchLoading} className="focus:border-primary" />
+                {errors.confirmPassword && <p className="text-xs text-destructive">{errors.confirmPassword.message as string}</p>}
               </div>
               <div className="space-y-2">
                 <label htmlFor="dob" className="block text-sm">Date of Birth</label>
-                <Input id="dob" type="date" {...form.register("dob")} disabled={dataFetchLoading} className="focus:border-primary" />
+                <Input id="dob" type="date" {...register("dob")} disabled={dataFetchLoading} className="focus:border-primary" />
+                {errors.dob && <p className="text-xs text-destructive">{errors.dob.message as string}</p>}
               </div>
               <div className="flex gap-2">
                 <div className="space-y-2 flex-1">
                   <label htmlFor="height" className="block text-sm">Height (cm)</label>
-                  <Input id="height" type="number" {...form.register("height", { required: true })} disabled={dataFetchLoading} />
+                  <Input id="height" type="number" {...register("height", { required: "Height is required." })} disabled={dataFetchLoading} />
+                  {errors.height && <p className="text-xs text-destructive">{errors.height.message as string}</p>}
                 </div>
                 <div className="space-y-2 flex-1">
                   <label htmlFor="weight" className="block text-sm">Weight (kg)</label>
-                  <Input id="weight" type="number" {...form.register("weight", { required: true })} disabled={dataFetchLoading} />
+                  <Input id="weight" type="number" {...register("weight", { required: "Weight is required." })} disabled={dataFetchLoading} />
+                  {errors.weight && <p className="text-xs text-destructive">{errors.weight.message as string}</p>}
                 </div>
               </div>
               <div className="space-y-2">
                 <label htmlFor="allergies" className="block text-sm">Allergies</label>
-                <Input id="allergies" placeholder="Allergies" {...form.register("allergies")} disabled={dataFetchLoading} />
+                <Input id="allergies" placeholder="Allergies" {...register("allergies")} disabled={dataFetchLoading} />
+                {errors.allergies && <p className="text-xs text-destructive">{errors.allergies.message as string}</p>}
               </div>
               <div className="space-y-2">
                 <label htmlFor="gender" className="block text-sm">Gender</label>
-                <select id="gender" {...form.register("gender", { required: true })} className="w-full rounded border py-2 text-foreground bg-background" disabled={dataFetchLoading}>
+                <select id="gender" {...register("gender", { required: "Gender is required." })} className="w-full rounded border py-2 text-foreground bg-background" disabled={dataFetchLoading}>
                   <option value="">Select Gender</option>
                   <option value="Male">Male</option>
                   <option value="Female">Female</option>
                   <option value="Other">Other</option>
                 </select>
+                {errors.gender && <p className="text-xs text-destructive">{errors.gender.message as string}</p>}
               </div>
               <div className="space-y-2">
                 <label htmlFor="bloodGroup" className="block text-sm">Blood Group</label>
-                <select id="bloodGroup" {...form.register("bloodGroup", { required: true })} className="w-full rounded border py-2 text-foreground bg-background" disabled={dataFetchLoading}>
+                <select id="bloodGroup" {...register("bloodGroup", { required: "Blood Group is required." })} className="w-full rounded border py-2 text-foreground bg-background" disabled={dataFetchLoading}>
                   <option value="">Select Blood Group</option>
                   <option value="A+">A+</option>
                   <option value="A-">A-</option>
@@ -83,8 +100,9 @@ export function SignUpForm({ onToggleForm }: SignUpFormProps) {
                   <option value="AB+">AB+</option>
                   <option value="AB-">AB-</option>
                 </select>
+                {errors.bloodGroup && <p className="text-xs text-destructive">{errors.bloodGroup.message as string}</p>}
               </div>
-              <EmergencyContactFields register={form.register} errors={form.formState.errors} disabled={dataFetchLoading} />
+              <EmergencyContactFields register={register} errors={errors} disabled={dataFetchLoading} />
             </CardContent>
             <CardFooter className="flex flex-col space-y-4">
               <Button type="submit" className="w-full" disabled={dataFetchLoading}>
@@ -134,3 +152,4 @@ export function SignUpForm({ onToggleForm }: SignUpFormProps) {
     </>
   );
 }
+
