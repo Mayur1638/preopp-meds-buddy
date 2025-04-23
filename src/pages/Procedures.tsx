@@ -26,6 +26,7 @@ const Procedures = () => {
   // Form state for reschedule
   const [newDate, setNewDate] = useState("");
   const [newLocation, setNewLocation] = useState("");
+  const [newDoctor, setNewDoctor] = useState("");
   const [isRescheduling, setIsRescheduling] = useState(false);
 
   // UI state for the reschedule success modal
@@ -64,10 +65,10 @@ const Procedures = () => {
 
   const handleReschedule = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!selectedProcedure || !newDate || !newLocation) return;
+    if (!selectedProcedure || !newDate || !newLocation || !newDoctor) return;
     setIsRescheduling(true);
     try {
-      await updateProcedure({ id: selectedProcedure, updates: { date: newDate, location: newLocation }});
+      await updateProcedure({ id: selectedProcedure, updates: { date: newDate, location: newLocation, doctor: newDoctor }});
       setShowReschedule(false);
       setShowSuccessModal(true);
     } catch (error) {
@@ -77,6 +78,7 @@ const Procedures = () => {
       setSelectedProcedure(null);
       setNewDate("");
       setNewLocation("");
+      setNewDoctor("");
     }
   };
 
@@ -86,6 +88,7 @@ const Procedures = () => {
     if (procedure) {
       setNewDate(procedure.date);
       setNewLocation(procedure.location || "");
+      setNewDoctor(procedure.doctor || "");
     }
     setShowReschedule(true);
   };
@@ -150,6 +153,8 @@ const Procedures = () => {
         setNewDate={setNewDate}
         newLocation={newLocation}
         setNewLocation={setNewLocation}
+        newDoctor={newDoctor}
+        setNewDoctor={setNewDoctor}
         isLoading={isRescheduling}
       />
 

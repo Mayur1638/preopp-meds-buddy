@@ -12,6 +12,20 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
+// 10 pre-defined doctor names
+const DOCTORS = [
+  "Dr. Raj Patel",
+  "Dr. Maya Iyer",
+  "Dr. Sneha Menon",
+  "Dr. Anil Sharma",
+  "Dr. Ayesha Khan",
+  "Dr. Rohan Gupta",
+  "Dr. Rachel Mathew",
+  "Dr. Suresh Desai",
+  "Dr. Priya Singh",
+  "Dr. Amit Joshi",
+];
+
 const UK_HOSPITALS = [
   "St Thomas' Hospital, London",
   "Royal London Hospital",
@@ -33,6 +47,8 @@ interface RescheduleFormProps {
   setNewDate: (date: string) => void;
   newLocation: string;
   setNewLocation: (location: string) => void;
+  newDoctor: string;
+  setNewDoctor: (doctor: string) => void;
   isLoading?: boolean;
 }
 
@@ -44,6 +60,8 @@ export const RescheduleForm = ({
   setNewDate,
   newLocation,
   setNewLocation,
+  newDoctor,
+  setNewDoctor,
   isLoading = false,
 }: RescheduleFormProps) => {
   return (
@@ -72,6 +90,19 @@ export const RescheduleForm = ({
               <SelectContent>
                 {UK_HOSPITALS.map((h) => (
                   <SelectItem key={h} value={h}>{h}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+          <div className="grid gap-2">
+            <Label htmlFor="new-doctor">Doctor</Label>
+            <Select value={newDoctor} onValueChange={setNewDoctor}>
+              <SelectTrigger>
+                <SelectValue placeholder="Select doctor" />
+              </SelectTrigger>
+              <SelectContent>
+                {DOCTORS.map((doc) => (
+                  <SelectItem key={doc} value={doc}>{doc}</SelectItem>
                 ))}
               </SelectContent>
             </Select>
