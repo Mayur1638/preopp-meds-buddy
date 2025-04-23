@@ -1,7 +1,7 @@
 
 import { useMedication } from "@/contexts/MedicationContext";
 import { useParams, Navigate } from "react-router-dom";
-import { DosAndDontsDetails } from "@/components/procedures/DosAndDontsDetails";
+import { ProcedureDetailsView } from "@/components/procedures/ProcedureDetails";
 
 const ProcedureDetails = () => {
   const { id } = useParams();
@@ -15,8 +15,8 @@ const ProcedureDetails = () => {
     return <Navigate to="/procedures" replace />;
   }
 
-  return <DosAndDontsDetails procedure={procedure} />;
+  // Use the ProcedureDetailsView component which has better UI
+  return <ProcedureDetailsView procedure={procedure} />;
 };
 
 export default ProcedureDetails;
-

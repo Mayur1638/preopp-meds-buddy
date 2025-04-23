@@ -49,6 +49,7 @@ const Procedures = () => {
   const handleAdd = (e: React.FormEvent) => {
     e.preventDefault();
     if (!procName || !procDate || !hospital || !doctor) return;
+    
     addProcedure({ 
       name: procName, 
       date: procDate, 
@@ -56,6 +57,8 @@ const Procedures = () => {
       doctor: doctor,
       notes: "" // Add empty notes field to match Procedure type
     });
+    
+    // Reset form fields
     setProcName("");
     setProcDate("");
     setHospital("");
@@ -66,13 +69,21 @@ const Procedures = () => {
   const handleReschedule = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!selectedProcedure || !newDate || !newLocation || !newDoctor) return;
+    
     setIsRescheduling(true);
     try {
-      await updateProcedure({ id: selectedProcedure, updates: { date: newDate, location: newLocation, doctor: newDoctor }});
+      await updateProcedure({ 
+        id: selectedProcedure, 
+        updates: { 
+          date: newDate, 
+          location: newLocation, 
+          doctor: newDoctor 
+        }
+      });
       setShowReschedule(false);
       setShowSuccessModal(true);
     } catch (error) {
-      // Optionally show error (not required by user)
+      console.error("Error rescheduling procedure:", error);
     } finally {
       setIsRescheduling(false);
       setSelectedProcedure(null);
@@ -114,7 +125,7 @@ const Procedures = () => {
           <TabsTrigger value="past">Past</TabsTrigger>
         </TabsList>
         
-        <TabsContent value="upcoming">
+        <TabsContent value="upcoming" className="pb-8">
           <ProceduresList 
             procedures={upcomingProcedures}
             onReschedule={openRescheduleDialog}
@@ -122,7 +133,7 @@ const Procedures = () => {
           />
         </TabsContent>
         
-        <TabsContent value="past">
+        <TabsContent value="past" className="pb-8">
           <ProceduresList 
             procedures={pastProcedures}
             onReschedule={openRescheduleDialog}
@@ -131,6 +142,7 @@ const Procedures = () => {
         </TabsContent>
       </Tabs>
 
+      {/* Add Procedure Form */}
       <AddProcedureForm
         showAdd={showAdd}
         setShowAdd={setShowAdd}
@@ -145,6 +157,7 @@ const Procedures = () => {
         setDoctor={setDoctor}
       />
 
+      {/* Reschedule Form */}
       <RescheduleForm
         showReschedule={showReschedule}
         setShowReschedule={setShowReschedule}
@@ -165,7 +178,7 @@ const Procedures = () => {
             <DialogTitle>Rescheduled Successfully</DialogTitle>
           </DialogHeader>
           <div className="text-center py-4">
-            <p className="text-green-600 font-semibold animate-fade-in">
+            <p className="text-green-600 font-semibold">
               Procedure has been rescheduled successfully!
             </p>
             <Button onClick={() => setShowSuccessModal(false)} className="mt-4 w-full">

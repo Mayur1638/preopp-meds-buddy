@@ -22,7 +22,7 @@ export const ProceduresList = ({ procedures, onReschedule, type }: ProceduresLis
   }
 
   return (
-    <div className="grid grid-cols-1 gap-4">
+    <div className="grid gap-4 sm:grid-cols-1 lg:grid-cols-2">
       {procedures.map((procedure) => (
         <ProcedureCard 
           key={procedure.id} 
