@@ -114,7 +114,7 @@ export function ProcedureDetailsView({ procedureId, notes }: ProcedureDetailsPro
           <ProcedureDos dos={hardcodedDos} />
           <ProcedureDonts donts={hardcodedDonts} />
         </div>
-        <div className="px-6 mt-4">
+        <div className="px-6 mt-4 pb-3">
           <ProcedurePreparations preparations={hardcodedPreparations} />
         </div>
         <div className="px-6">

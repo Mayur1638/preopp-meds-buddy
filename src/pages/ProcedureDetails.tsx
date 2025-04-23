@@ -28,8 +28,8 @@ const ProcedureDetails = () => {
     preparations: procedureDetails?.preparations || []
   };
 
-  // Use the ProcedureDetailsView component which has better UI
-  return <ProcedureDetailsView procedure={enhancedProcedure} />;
+  // Pass the procedureId and notes to the ProcedureDetailsView component
+  return <ProcedureDetailsView procedureId={procedure.id} notes={procedure.notes} />;
 };
 
 export default ProcedureDetails;
