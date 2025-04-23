@@ -1,10 +1,10 @@
+
 import { useForm } from "react-hook-form";
 import { useState } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useToast } from "@/components/ui/use-toast";
 
 export interface SignUpFormValues {
-  healthId: string;
   name: string;
   email: string;
   password: string;
@@ -29,7 +29,6 @@ export function useSignUpForm() {
 
   const form = useForm<SignUpFormValues>({
     defaultValues: {
-      healthId: "",
       name: "",
       email: "",
       password: "",
@@ -50,7 +49,6 @@ export function useSignUpForm() {
 
   const handleSubmit = async (values: SignUpFormValues) => {
     const {
-      healthId,
       name,
       email,
       password,
@@ -66,10 +64,10 @@ export function useSignUpForm() {
       emergencyRelation
     } = values;
 
-    if (!healthId || !name || !email || !password || !confirmPassword) {
+    if (!name || !email || !password || !confirmPassword) {
       toast({
         title: "Error",
-        description: "Please fill in all required fields: Health ID, Name, Email, and Password",
+        description: "Please fill in all required fields: Name, Email, and Password",
         variant: "destructive",
       });
       return;
@@ -89,6 +87,7 @@ export function useSignUpForm() {
 
     try {
       await signUp(email, password, name);
+      
       const { data: { session } } = await import("@/integrations/supabase/client").then(m => m.supabase.auth.getSession());
       const userId = session?.user?.id;
 

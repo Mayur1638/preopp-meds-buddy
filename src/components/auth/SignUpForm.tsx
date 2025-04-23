@@ -30,10 +30,6 @@ export function SignUpForm({ onToggleForm }: SignUpFormProps) {
           <form onSubmit={form.handleSubmit(handleSubmit)} noValidate>
             <CardContent className="space-y-4">
               <div className="space-y-2">
-                <Input placeholder="Health ID *" {...register("healthId", { required: "Health ID is required." })} disabled={dataFetchLoading} className="focus:border-primary" />
-                {errors.healthId && <p className="text-xs text-destructive">{errors.healthId.message as string}</p>}
-              </div>
-              <div className="space-y-2">
                 <Input placeholder="Full Name *" {...register("name", { required: "Full Name is required." })} disabled={dataFetchLoading} className="focus:border-primary" />
                 {errors.name && <p className="text-xs text-destructive">{errors.name.message as string}</p>}
               </div>
@@ -152,4 +148,3 @@ export function SignUpForm({ onToggleForm }: SignUpFormProps) {
     </>
   );
 }
-
