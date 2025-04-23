@@ -33,6 +33,7 @@ interface RescheduleFormProps {
   setNewDate: (date: string) => void;
   newLocation: string;
   setNewLocation: (location: string) => void;
+  isLoading?: boolean;
 }
 
 export const RescheduleForm = ({
@@ -43,6 +44,7 @@ export const RescheduleForm = ({
   setNewDate,
   newLocation,
   setNewLocation,
+  isLoading = false,
 }: RescheduleFormProps) => {
   return (
     <Dialog open={showReschedule} onOpenChange={setShowReschedule}>
@@ -74,7 +76,9 @@ export const RescheduleForm = ({
               </SelectContent>
             </Select>
           </div>
-          <Button type="submit" className="mt-2">Save Changes</Button>
+          <Button disabled={isLoading} type="submit" className="mt-2">
+            {isLoading ? "Saving..." : "Save Changes"}
+          </Button>
         </form>
       </DialogContent>
     </Dialog>

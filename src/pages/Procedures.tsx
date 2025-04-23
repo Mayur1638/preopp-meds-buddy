@@ -7,9 +7,12 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { AddProcedureForm } from "@/components/procedures/AddProcedureForm";
 import { RescheduleForm } from "@/components/procedures/RescheduleForm";
 import { ProceduresList } from "@/components/procedures/ProceduresList";
+import { useProcedures } from "@/hooks/useProcedures";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 
 const Procedures = () => {
   const { procedures, addProcedure } = useMedication();
+  const { updateProcedure } = useProcedures();
   const [showAdd, setShowAdd] = useState(false);
   const [showReschedule, setShowReschedule] = useState(false);
   const [selectedProcedure, setSelectedProcedure] = useState<string | null>(null);
@@ -23,6 +26,10 @@ const Procedures = () => {
   // Form state for reschedule
   const [newDate, setNewDate] = useState("");
   const [newLocation, setNewLocation] = useState("");
+  const [isRescheduling, setIsRescheduling] = useState(false);
+
+  // UI state for the reschedule success modal
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
 
   // Sort procedures by date
   const sortedProcedures = [...procedures].sort(
@@ -41,7 +48,6 @@ const Procedures = () => {
   const handleAdd = (e: React.FormEvent) => {
     e.preventDefault();
     if (!procName || !procDate || !hospital || !doctor) return;
-    
     addProcedure({ 
       name: procName, 
       date: procDate, 
@@ -49,7 +55,6 @@ const Procedures = () => {
       doctor: doctor,
       notes: "" // Add empty notes field to match Procedure type
     });
-    
     setProcName("");
     setProcDate("");
     setHospital("");
@@ -57,13 +62,22 @@ const Procedures = () => {
     setShowAdd(false);
   };
 
-  const handleReschedule = (e: React.FormEvent) => {
+  const handleReschedule = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Implementation would go here in a real app
-    setShowReschedule(false);
-    setSelectedProcedure(null);
-    setNewDate("");
-    setNewLocation("");
+    if (!selectedProcedure || !newDate || !newLocation) return;
+    setIsRescheduling(true);
+    try {
+      await updateProcedure({ id: selectedProcedure, updates: { date: newDate, location: newLocation }});
+      setShowReschedule(false);
+      setShowSuccessModal(true);
+    } catch (error) {
+      // Optionally show error (not required by user)
+    } finally {
+      setIsRescheduling(false);
+      setSelectedProcedure(null);
+      setNewDate("");
+      setNewLocation("");
+    }
   };
 
   const openRescheduleDialog = (procedureId: string) => {
@@ -136,7 +150,25 @@ const Procedures = () => {
         setNewDate={setNewDate}
         newLocation={newLocation}
         setNewLocation={setNewLocation}
+        isLoading={isRescheduling}
       />
+
+      {/* Success Modal for rescheduling */}
+      <Dialog open={showSuccessModal} onOpenChange={setShowSuccessModal}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Rescheduled Successfully</DialogTitle>
+          </DialogHeader>
+          <div className="text-center py-4">
+            <p className="text-green-600 font-semibold animate-fade-in">
+              Procedure has been rescheduled successfully!
+            </p>
+            <Button onClick={() => setShowSuccessModal(false)} className="mt-4 w-full">
+              Close
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
