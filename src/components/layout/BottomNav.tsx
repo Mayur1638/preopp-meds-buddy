@@ -18,6 +18,8 @@ export function BottomNav() {
     try {
       setIsLoggingOut(true);
       await signOut();
+    } catch (error) {
+      console.error("Error during logout:", error);
     } finally {
       setShowLogout(false);
       setIsLoggingOut(false);
