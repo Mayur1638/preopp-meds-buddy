@@ -1,39 +1,80 @@
 
-import { ProcedureDetail } from "@/types";
 import { Card } from "@/components/ui/card";
 import { useState } from "react";
-import { useMedication } from "@/contexts/MedicationContext";
 import { toast } from "@/hooks/use-toast";
 import { Separator } from "@/components/ui/separator";
-import { 
-  ProcedureDetailsHeader 
-} from "./ProcedureDetailsHeader";
-import { 
-  ProcedureDetailsInfo 
-} from "./ProcedureDetailsInfo";
-import { 
-  ProcedureDos 
-} from "./ProcedureDos";
-import { 
-  ProcedureDonts 
-} from "./ProcedureDonts";
-import { 
-  ProcedurePreparations 
-} from "./ProcedurePreparations";
-import { 
-  ProcedureNotes 
-} from "./ProcedureNotes";
-import { 
-  EditFormDialog 
-} from "./EditFormDialog";
+import { ProcedureDetailsHeader } from "./ProcedureDetailsHeader";
+import { ProcedureDetailsInfo } from "./ProcedureDetailsInfo";
+import { ProcedureDos } from "./ProcedureDos";
+import { ProcedureDonts } from "./ProcedureDonts";
+import { ProcedurePreparations } from "./ProcedurePreparations";
+import { ProcedureNotes } from "./ProcedureNotes";
+import { EditFormDialog } from "./EditFormDialog";
+import { ProcedureDetail } from "@/types";
+import { useMedication } from "@/contexts/MedicationContext";
 
 interface ProcedureDetailsProps {
-  procedure: ProcedureDetail;
+  procedureId: string;
+  notes?: string;
 }
 
-export function ProcedureDetailsView({ procedure }: ProcedureDetailsProps) {
+const hardcodedDos = [
+  "Arrive at least 30 minutes before your appointment.",
+  "Bring your ID and insurance information.",
+  "Inform the staff if you have allergies to medications.",
+  "Wear comfortable, loose-fitting clothing.",
+];
+
+const hardcodedDonts = [
+  "Do not eat or drink after midnight before your procedure.",
+  "Do not bring valuables with you.",
+  "Do not drive yourself home if sedation is involved.",
+  "Do not apply lotions or perfumes on the day of the procedure.",
+];
+
+const hardcodedPreparations = [
+  "Fast for 8 hours prior to the procedure.",
+  "Arrange for someone to drive you home.",
+  "Prepare a list of any medications you take.",
+  "Follow pre-procedure bathing instructions, if any.",
+];
+
+export function ProcedureDetailsView({ procedureId, notes }: ProcedureDetailsProps) {
   const [showEditForm, setShowEditForm] = useState(false);
   const { updateProcedure } = useMedication();
+
+  const handleUpdateProcedure = async (updatedProcedure: any) => {
+    try {
+      await updateProcedure(updatedProcedure);
+      setShowEditForm(false);
+      toast({
+        title: "Procedure updated",
+        description: "The procedure details have been updated successfully.",
+      });
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to update procedure. Please try again.",
+        variant: "destructive",
+      });
+    }
+  };
+
+  // Simulate procedure detail retrieval, replace this with your own lookup if needed
+  const procedure: ProcedureDetail = {
+    id: procedureId,
+    name: "Sample Procedure",
+    date: "2025-08-21",
+    doctor: "Dr. Johnson",
+    location: "Example Hospital",
+    notes: notes ?? "Please arrive 15 minutes early.",
+    description:
+      "A routine medical procedure performed by the physician. Please follow your pre-op instructions carefully.",
+    dos: hardcodedDos,
+    donts: hardcodedDonts,
+    preparations: hardcodedPreparations,
+  };
+
   const procedureDate = new Date(procedure.date);
   const today = new Date();
   const daysUntil = Math.ceil(
@@ -60,23 +101,6 @@ export function ProcedureDetailsView({ procedure }: ProcedureDetailsProps) {
     badgeVariant = "secondary";
   }
 
-  const handleUpdateProcedure = async (updatedProcedure: any) => {
-    try {
-      await updateProcedure(updatedProcedure);
-      setShowEditForm(false);
-      toast({
-        title: "Procedure updated",
-        description: "The procedure details have been updated successfully.",
-      });
-    } catch (error) {
-      toast({
-        title: "Error",
-        description: "Failed to update procedure. Please try again.",
-        variant: "destructive",
-      });
-    }
-  };
-
   return (
     <div className="space-y-6">
       <ProcedureDetailsHeader
@@ -85,16 +109,13 @@ export function ProcedureDetailsView({ procedure }: ProcedureDetailsProps) {
         onEdit={() => setShowEditForm(true)}
       />
       <Card className="shadow-md">
-        <ProcedureDetailsInfo
-          procedure={procedure}
-          procedureDate={procedureDate}
-        />
+        <ProcedureDetailsInfo procedure={procedure} procedureDate={procedureDate} />
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 px-6">
-          <ProcedureDos dos={procedure.dos} />
-          <ProcedureDonts donts={procedure.donts} />
+          <ProcedureDos dos={hardcodedDos} />
+          <ProcedureDonts donts={hardcodedDonts} />
         </div>
         <div className="px-6 mt-4">
-          <ProcedurePreparations preparations={procedure.preparations} />
+          <ProcedurePreparations preparations={hardcodedPreparations} />
         </div>
         <div className="px-6">
           <ProcedureNotes notes={procedure.notes} />

@@ -13,8 +13,8 @@ export function ProcedureDonts({ donts }: { donts: string[] }) {
       </CardHeader>
       <CardContent>
         <ul className="space-y-2">
-          {donts.map((item, index) => (
-            <li key={index} className="flex items-start">
+          {donts.map((item, idx) => (
+            <li key={idx} className="flex items-start">
               <AlertTriangle className="h-4 w-4 mr-2 text-destructive mt-0.5" />
               <span>{item}</span>
             </li>

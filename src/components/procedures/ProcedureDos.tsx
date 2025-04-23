@@ -13,8 +13,8 @@ export function ProcedureDos({ dos }: { dos: string[] }) {
       </CardHeader>
       <CardContent>
         <ul className="space-y-2">
-          {dos.map((item, index) => (
-            <li key={index} className="flex items-start">
+          {dos.map((item, idx) => (
+            <li key={idx} className="flex items-start">
               <CheckCircle className="h-4 w-4 mr-2 text-success mt-0.5" />
               <span>{item}</span>
             </li>
