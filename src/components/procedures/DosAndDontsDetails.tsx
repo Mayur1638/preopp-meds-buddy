@@ -3,15 +3,9 @@ import React from "react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { ArrowLeft } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { Procedure } from "@/types";
 
-// Dummy procedure info for the title card
-const procedure = {
-  name: "Colonoscopy",
-  date: "2024-05-03",
-  doctor: "Dr. Sneha Menon",
-  hospital: "City Hospital"
-};
-
+// Hardcoded Do's and Don'ts
 const dos = [
   "Follow pre-procedure fasting as instructed.",
   "Bring all relevant medical documents to the hospital.",
@@ -28,20 +22,26 @@ const donts = [
   "Do not hesitate to report discomfort to hospital staff.",
 ];
 
-export function DosAndDontsDetails() {
+interface DosAndDontsDetailsProps {
+  procedure: Procedure;
+}
+
+export function DosAndDontsDetails({ procedure }: DosAndDontsDetailsProps) {
   const navigate = useNavigate();
 
-  // Format date prettily
-  const formattedDate = new Date(procedure.date).toLocaleDateString(undefined, {
-    year: "numeric",
-    month: "long",
-    day: "numeric",
-    weekday: "short",
-  });
+  // Format date nicely
+  const formattedDate = procedure.date
+    ? new Date(procedure.date).toLocaleDateString(undefined, {
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+        weekday: "short",
+      })
+    : "";
 
   return (
     <div className="max-w-2xl mx-auto py-7 space-y-7">
-      {/* Title card with info and back button */}
+      {/* Title Card - dynamic info */}
       <Card className="bg-primary/5 border shadow flex flex-col">
         <CardHeader className="flex flex-row justify-between items-center pb-3">
           <div className="flex items-center">
@@ -52,13 +52,11 @@ export function DosAndDontsDetails() {
             >
               <ArrowLeft className="h-5 w-5" />
             </button>
-            <CardTitle className="text-xl">
-              {procedure.name}
-            </CardTitle>
+            <CardTitle className="text-xl">{procedure.name}</CardTitle>
           </div>
           <div className="flex flex-col items-end md:items-center">
             <CardDescription className="text-sm font-medium">{formattedDate}</CardDescription>
-            <CardDescription className="text-sm">{procedure.hospital}</CardDescription>
+            <CardDescription className="text-sm">{procedure.location}</CardDescription>
           </div>
         </CardHeader>
         <CardContent className="pt-0 flex flex-col gap-1">
@@ -66,6 +64,7 @@ export function DosAndDontsDetails() {
         </CardContent>
       </Card>
 
+      {/* Dos and Don'ts as separate styled cards */}
       <div className="grid gap-6 md:grid-cols-2">
         {/* Do's Card */}
         <Card className="border-green-200 bg-green-50">
@@ -97,3 +96,4 @@ export function DosAndDontsDetails() {
     </div>
   );
 }
+
