@@ -15,9 +15,6 @@ export interface SignUpFormValues {
   allergies: string;
   gender: string;
   bloodGroup: string;
-  emergencyName: string;
-  emergencyContact: string;
-  emergencyRelation: string;
 }
 
 export function useSignUpForm() {
@@ -39,9 +36,6 @@ export function useSignUpForm() {
       allergies: "",
       gender: "",
       bloodGroup: "",
-      emergencyName: "",
-      emergencyContact: "",
-      emergencyRelation: "",
     },
     mode: "onBlur",
     criteriaMode: "all",
@@ -59,9 +53,6 @@ export function useSignUpForm() {
       allergies,
       gender,
       bloodGroup,
-      emergencyName,
-      emergencyContact,
-      emergencyRelation
     } = values;
 
     if (!name || !email || !password || !confirmPassword) {
@@ -86,32 +77,71 @@ export function useSignUpForm() {
     form.clearErrors();
 
     try {
+      // First sign up the user through auth system
       await signUp(email, password, name);
       
+      // Now get the session to get the user ID
       const { data: { session } } = await import("@/integrations/supabase/client").then(m => m.supabase.auth.getSession());
       const userId = session?.user?.id;
 
       if (userId) {
+        // Check if patient record already exists to avoid duplicate key error
         await import("@/integrations/supabase/client").then(async m => {
           const { supabase } = m;
-          const { error } = await supabase
+          
+          // First check if the patient record already exists
+          const { data: existingPatient } = await supabase
             .from("patient_table")
-            .insert([{
-              id: userId,
-              pateint_name: name,
-              patient_dob: dob || null,
-              patient_height: height ? Number(height) : null,
-              patient_weight: weight ? Number(weight) : null,
-              gender: gender || null,
-              blood_group: bloodGroup || null,
-              allergies: allergies || null,
-            }]);
-          if (error) {
-            toast({
-              title: "Error",
-              description: "Could not complete your medical profile: " + error.message,
-              variant: "destructive",
-            });
+            .select("id")
+            .eq("id", userId)
+            .maybeSingle();
+            
+          if (!existingPatient) {
+            // Only insert if no record exists
+            const { error } = await supabase
+              .from("patient_table")
+              .insert([{
+                id: userId,
+                pateint_name: name,
+                patient_dob: dob || null,
+                patient_height: height ? Number(height) : null,
+                patient_weight: weight ? Number(weight) : null,
+                gender: gender || null,
+                blood_group: bloodGroup || null,
+                allergies: allergies || null,
+              }]);
+              
+            if (error) {
+              console.error("Error creating patient profile:", error);
+              toast({
+                title: "Error",
+                description: "Could not complete your medical profile: " + error.message,
+                variant: "destructive",
+              });
+            }
+          } else {
+            // Update existing record
+            const { error } = await supabase
+              .from("patient_table")
+              .update({
+                pateint_name: name,
+                patient_dob: dob || null,
+                patient_height: height ? Number(height) : null,
+                patient_weight: weight ? Number(weight) : null,
+                gender: gender || null,
+                blood_group: bloodGroup || null,
+                allergies: allergies || null,
+              })
+              .eq("id", userId);
+              
+            if (error) {
+              console.error("Error updating patient profile:", error);
+              toast({
+                title: "Error",
+                description: "Could not update your medical profile: " + error.message,
+                variant: "destructive",
+              });
+            }
           }
         });
       }

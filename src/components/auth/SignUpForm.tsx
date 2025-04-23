@@ -4,7 +4,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { useSignUpForm } from "./hooks/useSignUpForm";
-import { EmergencyContactFields } from "./EmergencyContactFields";
 import { FormProvider } from "react-hook-form";
 
 interface SignUpFormProps {
@@ -59,12 +58,12 @@ export function SignUpForm({ onToggleForm }: SignUpFormProps) {
               <div className="flex gap-2">
                 <div className="space-y-2 flex-1">
                   <label htmlFor="height" className="block text-sm">Height (cm)</label>
-                  <Input id="height" type="number" {...register("height", { required: "Height is required." })} disabled={dataFetchLoading} />
+                  <Input id="height" type="number" {...register("height")} disabled={dataFetchLoading} />
                   {errors.height && <p className="text-xs text-destructive">{errors.height.message as string}</p>}
                 </div>
                 <div className="space-y-2 flex-1">
                   <label htmlFor="weight" className="block text-sm">Weight (kg)</label>
-                  <Input id="weight" type="number" {...register("weight", { required: "Weight is required." })} disabled={dataFetchLoading} />
+                  <Input id="weight" type="number" {...register("weight")} disabled={dataFetchLoading} />
                   {errors.weight && <p className="text-xs text-destructive">{errors.weight.message as string}</p>}
                 </div>
               </div>
@@ -75,7 +74,7 @@ export function SignUpForm({ onToggleForm }: SignUpFormProps) {
               </div>
               <div className="space-y-2">
                 <label htmlFor="gender" className="block text-sm">Gender</label>
-                <select id="gender" {...register("gender", { required: "Gender is required." })} className="w-full rounded border py-2 text-foreground bg-background" disabled={dataFetchLoading}>
+                <select id="gender" {...register("gender")} className="w-full rounded border py-2 text-foreground bg-background" disabled={dataFetchLoading}>
                   <option value="">Select Gender</option>
                   <option value="Male">Male</option>
                   <option value="Female">Female</option>
@@ -85,7 +84,7 @@ export function SignUpForm({ onToggleForm }: SignUpFormProps) {
               </div>
               <div className="space-y-2">
                 <label htmlFor="bloodGroup" className="block text-sm">Blood Group</label>
-                <select id="bloodGroup" {...register("bloodGroup", { required: "Blood Group is required." })} className="w-full rounded border py-2 text-foreground bg-background" disabled={dataFetchLoading}>
+                <select id="bloodGroup" {...register("bloodGroup")} className="w-full rounded border py-2 text-foreground bg-background" disabled={dataFetchLoading}>
                   <option value="">Select Blood Group</option>
                   <option value="A+">A+</option>
                   <option value="A-">A-</option>
@@ -98,7 +97,6 @@ export function SignUpForm({ onToggleForm }: SignUpFormProps) {
                 </select>
                 {errors.bloodGroup && <p className="text-xs text-destructive">{errors.bloodGroup.message as string}</p>}
               </div>
-              <EmergencyContactFields register={register} errors={errors} disabled={dataFetchLoading} />
             </CardContent>
             <CardFooter className="flex flex-col space-y-4">
               <Button type="submit" className="w-full" disabled={dataFetchLoading}>
