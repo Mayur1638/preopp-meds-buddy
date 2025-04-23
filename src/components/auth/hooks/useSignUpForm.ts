@@ -15,6 +15,9 @@ export interface SignUpFormValues {
   allergies: string;
   gender: string;
   bloodGroup: string;
+  emergencyName: string;
+  emergencyContact: string;
+  emergencyRelation: string;
 }
 
 export function useSignUpForm() {
@@ -36,6 +39,9 @@ export function useSignUpForm() {
       allergies: "",
       gender: "",
       bloodGroup: "",
+      emergencyName: "",
+      emergencyContact: "",
+      emergencyRelation: "",
     },
     mode: "onBlur",
     criteriaMode: "all",
