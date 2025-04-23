@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { FormInput } from "@/components/ui/form-input";
 import { Textarea } from "@/components/ui/textarea";
 import { Procedure } from "@/types";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 interface EditProcedureFormProps {
   procedure: Procedure;
@@ -12,6 +13,20 @@ interface EditProcedureFormProps {
   onClose: () => void;
   onSubmit: (updatedProcedure: Procedure) => void;
 }
+
+// 10 pre-defined doctor names
+const DOCTORS = [
+  "Dr. Raj Patel",
+  "Dr. Maya Iyer",
+  "Dr. Sneha Menon",
+  "Dr. Anil Sharma",
+  "Dr. Ayesha Khan",
+  "Dr. Rohan Gupta",
+  "Dr. Rachel Mathew",
+  "Dr. Suresh Desai",
+  "Dr. Priya Singh",
+  "Dr. Amit Joshi",
+];
 
 export function EditProcedureForm({ procedure, isOpen, onClose, onSubmit }: EditProcedureFormProps) {
   const [procName, setProcName] = useState(procedure.name);
@@ -22,7 +37,6 @@ export function EditProcedureForm({ procedure, isOpen, onClose, onSubmit }: Edit
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    
     const updatedProcedure: Procedure = {
       ...procedure,
       name: procName,
@@ -31,7 +45,6 @@ export function EditProcedureForm({ procedure, isOpen, onClose, onSubmit }: Edit
       location,
       notes
     };
-    
     onSubmit(updatedProcedure);
   };
 
@@ -50,7 +63,6 @@ export function EditProcedureForm({ procedure, isOpen, onClose, onSubmit }: Edit
             onChange={(e) => setProcName(e.target.value)}
             required
           />
-          
           <FormInput
             label="Date"
             id="proc-date"
@@ -59,22 +71,28 @@ export function EditProcedureForm({ procedure, isOpen, onClose, onSubmit }: Edit
             onChange={(e) => setProcDate(e.target.value)}
             required
           />
-          
-          <FormInput
-            label="Doctor"
-            id="proc-doctor"
-            value={doctor}
-            onChange={(e) => setDoctor(e.target.value)}
-            required
-          />
-          
+          {/* Doctor Predefined Select */}
+          <div className="space-y-2">
+            <label htmlFor="proc-doctor" className="text-sm font-medium">
+              Doctor
+            </label>
+            <Select value={doctor} onValueChange={setDoctor}>
+              <SelectTrigger id="proc-doctor">
+                <SelectValue placeholder="Select doctor" />
+              </SelectTrigger>
+              <SelectContent>
+                {DOCTORS.map((d) => (
+                  <SelectItem value={d} key={d}>{d}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
           <FormInput
             label="Location"
             id="proc-location"
             value={location}
             onChange={(e) => setLocation(e.target.value)}
           />
-          
           <div className="space-y-2">
             <label htmlFor="proc-notes" className="text-sm font-medium">
               Notes
@@ -86,7 +104,6 @@ export function EditProcedureForm({ procedure, isOpen, onClose, onSubmit }: Edit
               placeholder="Any additional notes"
             />
           </div>
-          
           <div className="flex justify-end space-x-2 pt-4">
             <Button variant="outline" type="button" onClick={onClose}>
               Cancel
