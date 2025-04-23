@@ -1,21 +1,27 @@
 
 import { Home, Pill, Calendar, Settings, LogOut } from "lucide-react";
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { cn } from "@/lib/utils";
-import React, { useState } from "react";
+import { useState } from "react";
 import { LogoutDialog } from "./LogoutDialog";
 
 export function BottomNav() {
   const location = useLocation();
   const { signOut } = useAuth();
   const [showLogout, setShowLogout] = useState(false);
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
 
   const handleLogout = () => setShowLogout(true);
 
-  const handleConfirm = () => {
-    setShowLogout(false);
-    signOut();
+  const handleConfirm = async () => {
+    try {
+      setIsLoggingOut(true);
+      await signOut();
+    } finally {
+      setShowLogout(false);
+      setIsLoggingOut(false);
+    }
   };
 
   const handleCancel = () => setShowLogout(false);
@@ -48,10 +54,14 @@ export function BottomNav() {
           ))}
           <button
             onClick={handleLogout}
-            className="flex flex-col items-center justify-center px-3 py-2 text-destructive hover:text-destructive/80"
+            disabled={isLoggingOut}
+            className={cn(
+              "flex flex-col items-center justify-center px-3 py-2 text-destructive",
+              isLoggingOut ? "opacity-50 cursor-not-allowed" : "hover:text-destructive/80"
+            )}
           >
             <LogOut className="h-5 w-5" />
-            <span className="text-xs mt-1">Logout</span>
+            <span className="text-xs mt-1">{isLoggingOut ? "Logging out..." : "Logout"}</span>
           </button>
         </div>
       </nav>

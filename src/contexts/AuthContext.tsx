@@ -3,13 +3,14 @@ import { createContext, useContext, useState, useEffect, ReactNode } from "react
 import { User } from "@/types";
 import { supabase } from "@/integrations/supabase/client";
 import { Session } from "@supabase/supabase-js";
+import { toast } from "sonner";
 
 type AuthContextType = {
   user: User | null;
   loading: boolean;
   signIn: (email: string, password: string) => Promise<void>;
   signUp: (email: string, password: string, name: string) => Promise<void>;
-  signOut: () => void;
+  signOut: () => Promise<void>;
 };
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -23,6 +24,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     // Set up auth state listener
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       (event, currentSession) => {
+        console.log("Auth state changed:", event);
         setSession(currentSession);
         if (currentSession?.user) {
           const { id, email } = currentSession.user;
@@ -85,7 +87,19 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const signOut = async () => {
-    await supabase.auth.signOut();
+    try {
+      const { error } = await supabase.auth.signOut();
+      if (error) {
+        console.error("Error signing out:", error);
+        toast.error("Failed to sign out. Please try again.");
+        return;
+      }
+      // Session will be cleared by the onAuthStateChange listener
+      toast.success("Signed out successfully");
+    } catch (err) {
+      console.error("Unexpected error during sign out:", err);
+      toast.error("An unexpected error occurred. Please try again.");
+    }
   };
 
   return (
