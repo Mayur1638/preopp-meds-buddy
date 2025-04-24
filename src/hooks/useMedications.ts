@@ -9,16 +9,14 @@ export const useMedications = () => {
 
   const fetchMedications = async () => {
     try {
-      // Add user_id filter directly in the query
       const { data, error } = await supabase
         .from('medications')
         .select('*')
-        .eq('user_id', user?.id)    // <<--- filter in DB
+        .eq('user_id', user?.id)    
         .order('created_at', { ascending: false });
 
       if (error) throw error;
 
-      // No need for further filtering as DB already filtered
       return (data || []).map(item => ({
         id: item.id,
         name: item.medication_name || '',
@@ -28,6 +26,7 @@ export const useMedications = () => {
         endDate: item.end_date || '',
         time: item.time || '',
         instructions: item.special_instructions || '',
+        status: item.status || 'not_taken'
       }));
     } catch (error) {
       console.error("Error fetching medications:", error);
@@ -37,9 +36,6 @@ export const useMedications = () => {
 
   const addMedication = async (medication: Omit<Medication, 'id'>) => {
     try {
-      console.log("Adding medication:", medication);
-      console.log("User ID:", user?.id);
-      
       const { data, error } = await supabase
         .from('medications')
         .insert({
@@ -51,26 +47,20 @@ export const useMedications = () => {
           end_date: medication.endDate,
           time: medication.time,
           special_instructions: medication.instructions,
+          status: 'not_taken'
         })
         .select()
         .single();
 
       if (error) {
         console.error("Error adding medication:", error);
-        // In case of RLS error, use mock data as fallback
         return {
           id: `temp-${Date.now()}`,
-          name: medication.name,
-          quantity: medication.quantity,
-          dosage: medication.dosage || '',
-          startDate: medication.startDate,
-          endDate: medication.endDate,
-          time: medication.time,
-          instructions: medication.instructions || '',
+          ...medication,
+          status: 'not_taken'
         };
       }
       
-      // Map to frontend type
       return {
         id: data.id,
         name: data.medication_name || '',
@@ -80,19 +70,14 @@ export const useMedications = () => {
         endDate: data.end_date || '',
         time: data.time || '',
         instructions: data.special_instructions || '',
+        status: data.status || 'not_taken'
       };
     } catch (error) {
       console.error("Error adding medication:", error);
-      // Return fallback data
       return {
         id: `temp-${Date.now()}`,
-        name: medication.name,
-        quantity: medication.quantity,
-        dosage: medication.dosage || '',
-        startDate: medication.startDate,
-        endDate: medication.endDate,
-        time: medication.time,
-        instructions: medication.instructions || '',
+        ...medication,
+        status: 'not_taken'
       };
     }
   };
@@ -109,6 +94,7 @@ export const useMedications = () => {
           end_date: updates.endDate,
           time: updates.time,
           special_instructions: updates.instructions,
+          status: updates.status || 'not_taken'
         })
         .eq('id', id)
         .select()
@@ -116,20 +102,13 @@ export const useMedications = () => {
 
       if (error) {
         console.error("Error updating medication:", error);
-        // Return the updates as fallback
         return {
           id,
-          name: updates.name || '',
-          quantity: updates.quantity || '',
-          dosage: updates.dosage || '',
-          startDate: updates.startDate || '',
-          endDate: updates.endDate || '',
-          time: updates.time || '',
-          instructions: updates.instructions || '',
+          ...updates,
+          status: updates.status || 'not_taken'
         };
       }
       
-      // Map to frontend type
       return {
         id: data.id,
         name: data.medication_name || '',
@@ -139,19 +118,14 @@ export const useMedications = () => {
         endDate: data.end_date || '',
         time: data.time || '',
         instructions: data.special_instructions || '',
+        status: data.status || 'not_taken'
       };
     } catch (error) {
       console.error("Error updating medication:", error);
-      // Return fallback data
       return {
         id,
-        name: updates.name || '',
-        quantity: updates.quantity || '',
-        dosage: updates.dosage || '',
-        startDate: updates.startDate || '',
-        endDate: updates.endDate || '',
-        time: updates.time || '',
-        instructions: updates.instructions || '',
+        ...updates,
+        status: updates.status || 'not_taken'
       };
     }
   };
@@ -174,7 +148,7 @@ export const useMedications = () => {
   const { data: medications, isLoading } = useQuery({
     queryKey: ['medications', user?.id],
     queryFn: fetchMedications,
-    enabled: true, // Enable regardless of user ID
+    enabled: !!user?.id,
   });
 
   const { mutateAsync: addMedicationMutation } = useMutation({
