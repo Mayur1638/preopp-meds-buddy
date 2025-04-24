@@ -54,7 +54,6 @@ export type Database = {
           medication_strengthosage: string | null
           special_instructions: string | null
           start_date: string | null
-          status: string | null
           time: string | null
           user_id: string | null
         }
@@ -67,7 +66,6 @@ export type Database = {
           medication_strengthosage?: string | null
           special_instructions?: string | null
           start_date?: string | null
-          status?: string | null
           time?: string | null
           user_id?: string | null
         }
@@ -80,7 +78,6 @@ export type Database = {
           medication_strengthosage?: string | null
           special_instructions?: string | null
           start_date?: string | null
-          status?: string | null
           time?: string | null
           user_id?: string | null
         }
