@@ -8,14 +8,29 @@ export const usePatientData = () => {
   const queryClient = useQueryClient();
 
   const fetchPatientData = async () => {
-    const { data, error } = await supabase
+    // First fetch patient data
+    const { data: patientData, error: patientError } = await supabase
       .from('patient_table')
       .select('*')
       .eq('id', user?.id)
       .single();
 
-    if (error) throw error;
-    return data;
+    if (patientError) throw patientError;
+
+    // Then fetch emergency contact data
+    const { data: emergencyContact, error: emergencyError } = await supabase
+      .from('emergency_contact')
+      .select('*')
+      .eq('user_id', user?.id)
+      .maybeSingle();
+
+    if (emergencyError) throw emergencyError;
+
+    // Combine the data
+    return {
+      ...patientData,
+      emergencyContact: emergencyContact || null
+    };
   };
 
   const updatePatientData = async (updates: {
