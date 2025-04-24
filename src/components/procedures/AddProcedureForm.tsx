@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
@@ -25,18 +24,18 @@ const UK_HOSPITALS = [
   "John Radcliffe Hospital, Oxford"
 ];
 
-// Add the doctors list
+// Updated doctors list with diverse names
 const DOCTORS = [
-  "Dr. Raj Patel",
-  "Dr. Maya Iyer",
-  "Dr. Sneha Menon",
-  "Dr. Anil Sharma",
-  "Dr. Ayesha Khan",
-  "Dr. Rohan Gupta",
-  "Dr. Rachel Mathew",
-  "Dr. Suresh Desai",
-  "Dr. Priya Singh",
-  "Dr. Amit Joshi",
+  "Dr. Sarah Johnson",
+  "Dr. Michael Chen",
+  "Dr. Emma Williams",
+  "Dr. James Anderson",
+  "Dr. Maria Garcia",
+  "Dr. David Thompson",
+  "Dr. Sophie Martin",
+  "Dr. Thomas Wilson",
+  "Dr. Lisa Parker",
+  "Dr. Robert Brown",
 ];
 
 interface AddProcedureFormProps {
