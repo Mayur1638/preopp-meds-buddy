@@ -25,6 +25,20 @@ const UK_HOSPITALS = [
   "John Radcliffe Hospital, Oxford"
 ];
 
+// Add the doctors list
+const DOCTORS = [
+  "Dr. Raj Patel",
+  "Dr. Maya Iyer",
+  "Dr. Sneha Menon",
+  "Dr. Anil Sharma",
+  "Dr. Ayesha Khan",
+  "Dr. Rohan Gupta",
+  "Dr. Rachel Mathew",
+  "Dr. Suresh Desai",
+  "Dr. Priya Singh",
+  "Dr. Amit Joshi",
+];
+
 interface AddProcedureFormProps {
   showAdd: boolean;
   setShowAdd: (show: boolean) => void;
@@ -93,14 +107,17 @@ export const AddProcedureForm = ({
             </Select>
           </div>
           <div className="grid gap-2">
-            <Label htmlFor="doctor-name">Doctor Name</Label>
-            <Input
-              id="doctor-name"
-              type="text"
-              value={doctor}
-              onChange={(e) => setDoctor(e.target.value)}
-              required
-            />
+            <Label htmlFor="doctor-select">Doctor Name</Label>
+            <Select value={doctor} onValueChange={setDoctor}>
+              <SelectTrigger>
+                <SelectValue placeholder="Select doctor" />
+              </SelectTrigger>
+              <SelectContent>
+                {DOCTORS.map((doc) => (
+                  <SelectItem key={doc} value={doc}>{doc}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
           <Button type="submit" className="mt-2">Add</Button>
         </form>

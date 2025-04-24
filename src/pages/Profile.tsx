@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { Sun } from "lucide-react";
@@ -32,7 +31,6 @@ export default function Profile() {
     }
   });
   
-  // Update profile state when data is loaded
   useEffect(() => {
     if (patientData) {
       setProfile(prev => ({
@@ -48,7 +46,6 @@ export default function Profile() {
     }
   }, [patientData]);
 
-  // Update emergency contact when data is loaded
   useEffect(() => {
     if (emergencyContact) {
       setProfile(prev => ({
@@ -64,7 +61,20 @@ export default function Profile() {
   
   const [editingProfile, setEditingProfile] = useState(false);
   const [editingEmergencyContact, setEditingEmergencyContact] = useState(false);
-  const [theme, setTheme] = useState<"dark" | "light">("dark");
+  const [theme, setTheme] = useState<"dark" | "light">(() => {
+    if (typeof document !== "undefined") {
+      return document.documentElement.classList.contains("dark") ? "dark" : "light";
+    }
+    return "light";
+  });
+
+  useEffect(() => {
+    if (theme === "dark") {
+      document.documentElement.classList.add("dark");
+    } else {
+      document.documentElement.classList.remove("dark");
+    }
+  }, [theme]);
 
   const handleProfileChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     setProfile({ ...profile, [e.target.name]: e.target.value });
@@ -101,14 +111,7 @@ export default function Profile() {
   };
 
   const toggleTheme = () => {
-    const newTheme = theme === "dark" ? "light" : "dark";
-    setTheme(newTheme);
-    
-    if (newTheme === "light") {
-      document.documentElement.classList.remove('dark');
-    } else {
-      document.documentElement.classList.add('dark');
-    }
+    setTheme(prevTheme => prevTheme === "dark" ? "light" : "dark");
   };
 
   if (profileLoading || contactLoading) {

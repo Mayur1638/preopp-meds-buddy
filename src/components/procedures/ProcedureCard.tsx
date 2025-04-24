@@ -93,7 +93,7 @@ export function ProcedureCard({ procedure, onReschedule, compact = false }: Proc
                 onReschedule();
               }}
             >
-              Reschedule
+              Edit
             </Button>
           )}
         </CardFooter>
