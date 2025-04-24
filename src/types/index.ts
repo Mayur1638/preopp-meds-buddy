@@ -15,6 +15,7 @@ export interface Medication {
   time: string;
   dosage?: string;
   instructions?: string;
+  status: 'not_taken' | 'taken' | 'skipped';
 }
 
 export interface TodayMedication extends Medication {
